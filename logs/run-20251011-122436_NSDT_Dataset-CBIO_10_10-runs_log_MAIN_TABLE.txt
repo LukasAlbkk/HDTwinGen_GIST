@@ -1,0 +1,335 @@
+MainProcess| 2025-10-11 12:24:36,375,375 multiprocessing INFO Starting run 	 | See log at : logs/run-20251011-122436_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:24:36,375,375 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251011-122436_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-11 12:24:36,375,375 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-11 12:24:36,377,377 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-11 12:24:36,394,394 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,395,395 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,395,395 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,395,395 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-11 12:24:36,397,397 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-11 12:24:36,403,403 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,403,403 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,403,403 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,403,403 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-11 12:24:36,405,405 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-11 12:24:36,410,410 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,411,411 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,411,411 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,411,411 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-11 12:24:36,413,413 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-11 12:24:36,418,418 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,418,418 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,418,418 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,418,418 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-11 12:24:36,420,420 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-11 12:24:36,425,425 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,425,425 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,426,426 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,426,426 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-11 12:24:36,428,428 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-11 12:24:36,432,432 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,433,433 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,433,433 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,433,433 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-11 12:24:36,435,435 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-11 12:24:36,440,440 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,440,440 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,441,441 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,441,441 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-11 12:24:36,443,443 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-11 12:24:36,447,447 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,448,448 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,448,448 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,448,448 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-11 12:24:36,450,450 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-11 12:24:36,456,456 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,457,457 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,457,457 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,457,457 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-11 12:24:36,459,459 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-11 12:24:36,466,466 multiprocessing ERROR [Error] 
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 359, in _run
+    initial_prompt = prompts.first_task_prompt(env_name=self.env.env_name, generations=self.config.run.generations)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 86, in first_task_prompt
+    system_description = get_system_description(env_name)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/prompts.py", line 56, in get_system_description
+    raise NotImplementedError
+NotImplementedError
+MainProcess| 2025-10-11 12:24:36,466,466 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error=
+MainProcess| 2025-10-11 12:24:36,466,466 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:24:36,466,466 multiprocessing INFO Time taken for all runs: 0.09139849996427074s	| 0.0015233083327378457 minutes
+MainProcess| 2025-10-11 12:24:36,466,466 multiprocessing INFO [Log found at] logs/run-20251011-122436_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:24:36,477,477 multiprocessing INFO process shutting down

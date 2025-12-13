@@ -1,0 +1,285 @@
+MainProcess| 2025-10-11 12:22:14,465,465 multiprocessing INFO Starting run 	 | See log at : logs/run-20251011-122214_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:22:14,465,465 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251011-122214_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-11 12:22:14,466,466 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-11 12:22:14,468,468 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-11 12:22:14,483,483 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,485,485 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,485,485 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,485,485 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-11 12:22:14,487,487 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-11 12:22:14,492,492 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,492,492 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,492,492 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,492,492 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-11 12:22:14,494,494 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-11 12:22:14,499,499 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,499,499 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,499,499 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,499,499 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-11 12:22:14,501,501 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-11 12:22:14,506,506 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,506,506 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,507,507 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,507,507 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-11 12:22:14,508,508 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-11 12:22:14,513,513 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,513,513 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,513,513 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,513,513 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-11 12:22:14,515,515 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-11 12:22:14,520,520 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,520,520 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,520,520 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,520,520 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-11 12:22:14,522,522 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-11 12:22:14,526,526 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,527,527 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,527,527 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,527,527 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-11 12:22:14,529,529 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-11 12:22:14,534,534 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,534,534 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,534,534 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,534,534 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-11 12:22:14,536,536 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-11 12:22:14,540,540 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,541,541 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,541,541 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,541,541 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-11 12:22:14,543,543 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-11 12:22:14,548,548 multiprocessing ERROR [Error] 'properties'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 456, in get_model_max_tokens
+    max_tokens = model_details['properties']['max_tokens']
+                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'properties'
+MainProcess| 2025-10-11 12:22:14,548,548 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error='properties'
+MainProcess| 2025-10-11 12:22:14,548,548 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:22:14,548,548 multiprocessing INFO Time taken for all runs: 0.08269295800710097s	| 0.001378215966785016 minutes
+MainProcess| 2025-10-11 12:22:14,548,548 multiprocessing INFO [Log found at] logs/run-20251011-122214_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:22:14,556,556 multiprocessing INFO process shutting down

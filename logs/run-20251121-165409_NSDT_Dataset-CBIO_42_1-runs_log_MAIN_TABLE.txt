@@ -1,0 +1,184 @@
+MainProcess| 2025-11-21 16:54:09,040,40 multiprocessing INFO Starting run 	 | See log at : logs/run-20251121-165409_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-11-21 16:54:09,040,40 multiprocessing INFO [Main Config] {'run': {'samples': 3, 'max_episodes': 1, 'log_path': 'logs/run-20251121-165409_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4o-mini', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 3, 'reflection_history': 2, 'sub_group_resample': 1, 'generations': 3, 'nsdt_patience': 5, 'optimize_params': True, 'optimization': {'patience': 30, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1, 'learning_rate': 0.001, 'weight_decay': 0.001, 'epochs': 200, 'log_interval': 25}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'modelos_novos'}, 'setup': {'trajectories_sweep': [1000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'HDTwinGen_DigitalTwin', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 42, 'seed_runs': 1, 'enable_tests': False, 'cuda': False, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-11-21 16:54:09,040,40 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 3)
+MainProcess| 2025-11-21 16:54:09,042,42 multiprocessing INFO Running Dataset-CBIO NSDT 42
+MainProcess| 2025-11-21 16:54:09,061,61 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 42 | Sampling n=1 keep_top_samples
+MainProcess| 2025-11-21 16:54:09,075,75 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-11-21 16:54:09,075,75 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Digital Twin Model for GIST Cancer (CBIO Longitudinal Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model for Digital Twin generation. The model outputs 2 derivatives
+for STATE variables, using 17 STATIC features (including genetics and treatment) and 2 CONTROL inputs.
+
+STRUCTURAL CAUSAL MODEL (SCM) - CRITICAL:
+The model architecture MUST respect the Causal Graph provided below. 
+You must ensure that the derivative calculations for the state variables (msi_score, tmb_nonsynonymous)
+incorporate their specific PARENTS defined in the SCM.
+
+KEY RELATIONSHIPS TO MODEL:
+- msi_score -> driven by msi_type, site_group, recurrence
+- tmb -> driven by tumor_purity
+- Treatment & Mutations (KIT, TP53) should modulate these dynamics globally via the latent state.
+
+INPUTS (order is FIXED - matches env.py):
+1. msi_score
+2. tmb_nonsynonymous
+3. age_at_diagnosis
+4. gender_encoded
+5. stage_encoded
+6. primary_site_group_encoded
+7. race_encoded
+8. recurrence_encoded
+9. tumor_purity
+10. msi_type_encoded
+11. sample_type_encoded
+12. tumor_size
+13. mitotic_rate
+14. sample_coverage
+15. treatment_encoded
+16. treatment_response_encoded
+17. has_kit_mutation
+18. has_tp53_mutation
+19. has_pdgfra_mutation
+20. treatment_duration_days (Control)
+21. recurrence_free_months (Control)
+
+OUTPUT:
+(d_msi_score__dt, d_tmb_nonsynonymous__dt)
+
+```
+
+Skeleton Code:
+```python
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    #
+    # SCM-INFORMED ARCHITECTURE for Digital Twin
+    #
+    # REQUIRED STRUCTURE:
+    # 1. Shared encoder (process all 21 inputs) -> Latent H
+    #
+    # 2. MSI Pathway (d_msi_score__dt):
+    #    - Must combine Latent H with specific SCM parents.
+    #
+    # 3. TMB Pathway (d_tmb_nonsynonymous__dt):
+    #    - Must combine Latent H with specific SCM parent.
+    #
+    # Use Small MLPs (e.g., 64->32) with Dropout(0.3).
+
+  def forward(self,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              gender_encoded: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              primary_site_group_encoded: torch.Tensor,
+              race_encoded: torch.Tensor,
+              recurrence_encoded: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              msi_type_encoded: torch.Tensor,
+              sample_type_encoded: torch.Tensor,
+              tumor_size: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              sample_coverage: torch.Tensor,
+              treatment_encoded: torch.Tensor,
+              treatment_response_encoded: torch.Tensor,
+              has_kit_mutation: torch.Tensor,
+              has_tp53_mutation: torch.Tensor,
+              has_pdgfra_mutation: torch.Tensor,
+              treatment_duration_days: torch.Tensor,
+              recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # 1. Concatenate all inputs (21 dim)
+    # 2. Forward pass through shared encoder
+    # 3. Forward pass through SCM-specific heads
+    # 4. Clamp derivatives [-1, 1]
+    return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+MainProcess| 2025-11-21 16:54:09,076,76 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 15.84% | Tokens remaining 6894]
+MainProcess| 2025-11-21 16:54:35,518,518 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-11-21 16:54:35,519,519 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom typing import Tuple\n\nclass StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\t# Shared encoder\n\t\tself.shared_encoder = nn.Sequential(\n\t\t\tnn.Linear(21, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.Dropout(0.3),\n\t\t\tnn.Linear(64, 32),\n\t\t\tnn.ELU()\n\t\t)\n\t\t\n\t\t# MSI Pathway\n\t\tself.msi_head = nn.Sequential(\n\t\t\tnn.Linear(32 + 3, 64),  # 32 from shared + 3 parents\n\t\t\tnn.ELU(),\n\t\t\tnn.Dropout(0.3),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\t\t\n\t\t# TMB Pathway\n\t\tself.tmb_head = nn.Sequential(\n\t\t\tnn.Linear(32 + 1, 64),  # 32 from shared + 1 parent\n\t\t\tnn.ELU(),\n\t\t\tnn.Dropout(0.3),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\n\tdef forward(self,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tgender_encoded: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\tprimary_site_group_encoded: torch.Tensor,\n\t\t\trace_encoded: torch.Tensor,\n\t\t\trecurrence_encoded: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tmsi_type_encoded: torch.Tensor,\n\t\t\tsample_type_encoded: torch.Tensor,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tsample_coverage: torch.Tensor,\n\t\t\ttreatment_encoded: torch.Tensor,\n\t\t\ttreatment_response_encoded: torch.Tensor,\n\t\t\thas_kit_mutation: torch.Tensor,\n\t\t\thas_tp53_mutation: torch.Tensor,\n\t\t\thas_pdgfra_mutation: torch.Tensor,\n\t\t\ttreatment_duration_days: torch.Tensor,\n\t\t\trecurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:\n\t\t# Concatenate all inputs (21 dim)\n\t\tinputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,\n\t\t\tstage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,\n\t\t\ttumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,\n\t\t\tmitotic_rate, sample_coverage, treatment_encoded, treatment_response_encoded,\n\t\t\thas_kit_mutation, has_tp53_mutation, has_pdgfra_mutation,\n\t\t\ttreatment_duration_days, recurrence_free_months), dim=-1)\n\t\t\n\t\t# Forward pass through shared encoder\n\t\tlatent_h = self.shared_encoder(inputs)\n\t\t\n\t\t# Extract specific parents for MSI and TMB\n\t\tmsi_parents = torch.cat((msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)\n\t\ttmb_parents = tumor_purity.unsqueeze(-1)  # Only one parent for TMB\n\t\t\n\t\t# Forward pass through SCM-specific heads\n\t\td_msi_score__dt = self.msi_head(torch.cat((latent_h, msi_parents), dim=-1))\n\t\td_tmb_nonsynonymous__dt = self.tmb_head(torch.cat((latent_h, tmb_parents), dim=-1))\n\t\t\n\t\t# Clamp derivatives to [-1, 1] for numerical stability\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1.0, 1.0)\n\t\t\n\t\treturn (d_msi_score__dt, d_tmb_nonsynonymous__dt)","code_description":"This code implements a hybrid neural ODE-like model for simulating the dynamics of GIST cancer, incorporating both mechanistic and learned components while respecting the specified causal relationships."}
+MainProcess| 2025-11-21 16:54:36,254,254 multiprocessing ERROR [Error] Tensors must have same number of dimensions: got 1 and 2
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 382, in _run
+    function_return_message, code_dict, has_success = process_function_call_and_return_message(response_message["function_call"], self.simulator_code_dict, env=self.env, functions=self.functions, config=self.config, logger=self.logger)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 114, in process_function_call_and_return_message
+    function_response, simulator_code_dict, has_success = function_to_call(**function_args)
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 25, in complete_StateDifferential_code
+    train_loss, val_loss, optimized_parameters, loss_per_dim_dict, test_loss = env.evaluate_simulator_code(StateDifferential=user_code_module.StateDifferential, config=config, logger=logger)
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/envs.py", line 163, in evaluate_simulator_code
+    return gt_env.evaluate_simulator_code_wrapper(StateDifferential=StateDifferential, train_data=self.train_data, val_data=self.val_data, test_data=self.test_data, config=config, logger=logger, env_name=self.env_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 72, in evaluate_simulator_code_wrapper
+    train_loss, val_loss, optimized_parameters, loss_per_dim, test_loss = self.evaluate_simulator_code_using_pytorch(StateDifferential, train_data, val_data, test_data, config=config, logger=logger, env_name=env_name)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 274, in evaluate_simulator_code_using_pytorch
+    cum_loss += train_opt(f_model, states_train_batch, actions_train_batch, static_train_batch)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 172, in train
+    dx_dt = model(
+            ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 86, in forward
+RuntimeError: Tensors must have same number of dimensions: got 1 and 2
+MainProcess| 2025-11-21 16:54:36,259,259 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 3)	| error=Tensors must have same number of dimensions: got 1 and 2
+MainProcess| 2025-11-21 16:54:36,261,261 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 42, 'method_name': 'NSDT'}
+MainProcess| 2025-11-21 16:54:36,261,261 multiprocessing INFO Time taken for all runs: 27.22054449999996s	| 0.453675741666666 minutes
+MainProcess| 2025-11-21 16:54:36,261,261 multiprocessing INFO [Log found at] logs/run-20251121-165409_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-11-21 16:54:36,269,269 multiprocessing INFO process shutting down

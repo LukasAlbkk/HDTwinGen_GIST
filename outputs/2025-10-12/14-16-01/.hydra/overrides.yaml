@@ -1,0 +1,2 @@
+- setup.use_azure_api=false
+- run.model=gpt-4-0613

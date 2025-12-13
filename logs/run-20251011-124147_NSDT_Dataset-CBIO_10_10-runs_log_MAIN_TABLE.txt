@@ -1,0 +1,285 @@
+MainProcess| 2025-10-11 12:41:47,925,925 multiprocessing INFO Starting run 	 | See log at : logs/run-20251011-124147_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:41:47,925,925 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251011-124147_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt4o-mini-202409', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-11 12:41:47,926,926 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-11 12:41:47,928,928 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-11 12:41:47,942,942 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,945,945 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,945,945 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,945,945 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-11 12:41:47,947,947 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-11 12:41:47,952,952 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,952,952 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,953,953 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,953,953 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-11 12:41:47,955,955 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-11 12:41:47,960,960 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,960,960 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,961,961 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,961,961 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-11 12:41:47,963,963 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-11 12:41:47,968,968 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,968,968 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,969,969 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,969,969 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-11 12:41:47,971,971 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-11 12:41:47,975,975 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,976,976 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,976,976 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,976,976 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-11 12:41:47,978,978 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-11 12:41:47,983,983 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,984,984 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,984,984 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,984,984 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-11 12:41:47,986,986 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-11 12:41:47,992,992 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,992,992 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,992,992 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:47,992,992 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-11 12:41:47,994,994 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-11 12:41:47,999,999 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,999,999 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:47,999,999 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:48,000,0 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-11 12:41:48,002,2 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-11 12:41:48,006,6 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:48,006,6 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:48,007,7 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:48,007,7 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-11 12:41:48,008,8 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-11 12:41:48,012,12 multiprocessing ERROR [Error] 'gpt4o-mini-202409'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 18, in simulate
+    agent = initialize_agent(method_name, env, config, rate_limiter, wandb, logger)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 72, in initialize_agent
+    agent = NSDT(env, config, logger, rate_limiter, method_name=method_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 145, in __init__
+    self.max_tokens = get_model_max_tokens(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 453, in get_model_max_tokens
+    model_details = OPENAI_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:48,013,13 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error='gpt4o-mini-202409'
+MainProcess| 2025-10-11 12:41:48,013,13 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:41:48,013,13 multiprocessing INFO Time taken for all runs: 0.0874751249793917s	| 0.0014579187496565281 minutes
+MainProcess| 2025-10-11 12:41:48,013,13 multiprocessing INFO [Log found at] logs/run-20251011-124147_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:41:48,022,22 multiprocessing INFO process shutting down

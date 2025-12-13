@@ -1,0 +1,1025 @@
+MainProcess| 2025-10-12 14:44:41,609,609 multiprocessing INFO Starting run 	 | See log at : logs/run-20251012-144441_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-12 14:44:41,609,609 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251012-144441_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-12 14:44:41,609,609 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-12 14:44:41,611,611 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-12 14:44:41,619,619 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 10 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,632,632 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,632,632 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,632,632 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,633,633 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,638,638 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,639,639 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,639,639 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-12 14:44:41,641,641 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-12 14:44:41,647,647 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 11 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,648,648 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,648,648 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,648,648 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,649,649 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,650,650 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,650,650 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,650,650 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-12 14:44:41,652,652 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-12 14:44:41,658,658 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 12 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,659,659 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,659,659 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,659,659 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,660,660 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,661,661 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,661,661 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,661,661 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-12 14:44:41,663,663 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-12 14:44:41,668,668 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 13 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,669,669 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,669,669 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,669,669 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,670,670 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,671,671 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,672,672 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,672,672 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-12 14:44:41,674,674 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-12 14:44:41,679,679 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 14 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,679,679 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,679,679 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,679,679 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,680,680 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,681,681 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,681,681 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,682,682 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-12 14:44:41,683,683 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-12 14:44:41,689,689 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 15 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,689,689 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,689,689 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,689,689 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,690,690 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,691,691 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,691,691 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,691,691 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-12 14:44:41,693,693 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-12 14:44:41,699,699 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 16 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,699,699 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,699,699 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,699,699 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,700,700 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,701,701 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,702,702 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,702,702 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-12 14:44:41,704,704 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-12 14:44:41,709,709 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 17 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,710,710 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,710,710 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,710,710 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,711,711 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,714,714 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,720,720 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,720,720 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-12 14:44:41,722,722 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-12 14:44:41,734,734 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 18 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,734,734 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,735,735 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,735,735 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,736,736 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,736,736 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,739,739 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,739,739 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-12 14:44:41,742,742 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-12 14:44:41,748,748 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 19 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:44:41,749,749 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:44:41,749,749 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:44:41,749,749 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:44:41,750,750 multiprocessing ERROR [Error] No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 149, in create
+    ) = cls.__prepare_create_request(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 106, in __prepare_create_request
+    requestor = api_requestor.APIRequestor(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 138, in __init__
+    self.api_key = key or util.default_api_key()
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/util.py", line 186, in default_api_key
+    raise openai.error.AuthenticationError(
+openai.error.AuthenticationError: No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,751,751 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error=No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>). If your API key is stored in a file, you can point the openai module at it with 'openai.api_key_path = <PATH>'. You can generate API keys in the OpenAI web interface. See https://platform.openai.com/account/api-keys for details.
+MainProcess| 2025-10-12 14:44:41,751,751 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:44:41,751,751 multiprocessing INFO Time taken for all runs: 0.1426966249709949s	| 0.0023782770828499147 minutes
+MainProcess| 2025-10-12 14:44:41,752,752 multiprocessing INFO [Log found at] logs/run-20251012-144441_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-12 14:44:41,758,758 multiprocessing INFO process shutting down

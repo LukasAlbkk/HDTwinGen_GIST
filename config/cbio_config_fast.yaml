@@ -1,0 +1,60 @@
+run:
+  samples: 10  # Era 100, agora 10
+  max_episodes: 1
+  log_path: ''
+  device: ''
+  model: 'gpt-4o-mini'      # GPT-4o mini - rápido e econômico
+  temperature: 0.7
+  top_p: 0.95
+  frequency_penalty: 0
+  presence_penalty: 0
+  stop: ""
+  dynode_learning_rate: 1e-2
+  rnn_learning_rate: 1e-2
+  optimizer: 'pytorch'
+  keep_top_samples: 2  # Era 8, agora 2 (só os 2 melhores)
+  reflection_history: 2  # Era 3, agora 2
+  sub_group_resample: 1  # Era 2, agora 1
+  generations: 2  # Era 3, agora 2 gerações
+  nsdt_patience: 10  # Era 20, agora 10 (para antes)
+  optimize_params: true
+  optimization:
+    patience: 20  # Era 50, agora 20 (early stopping mais rápido)
+    log_optimization: false  # Desabilitar logs desnecessários
+  pytorch_as_optimizer:
+    batch_size: 1000
+    learning_rate: 1e-2
+    weight_decay: 0.0
+    epochs: 200  # Era 1000, agora 200 épocas!
+    log_interval: 50  # Era 100, agora 50 (menos logs)
+  dynode_retrain_model: true
+  dynode_saved_models_folder: 'saved_models/cbio'
+setup:
+  trajectories_sweep: [1000]
+  use_azure_api: false
+  debug_mode: false
+  flush_mode: false
+  multi_process_results: false
+  multi_process_cores: 4
+  experiment: 'MAIN_TABLE'  # Usar nome existente
+  methods_to_evaluate: ['NSDT']
+  envs_to_evaluate: ['Dataset-CBIO']
+  wandb:
+    project: HDTwinGen_CBIO
+    track: false
+  log_dir: logs
+  torch_deterministic: true
+  seed_start: 10
+  seed_runs: 1  # Era 3, agora apenas 1 seed!
+  enable_tests: false
+  cuda: false
+  data_science_env_use_description: false
+  open_ai_rate_limit_requests_per_minute: 3000
+  api_retry_with_exponential_backoff__initial_delay: 1
+  api_retry_with_exponential_backoff__exponential_base: 2
+  api_retry_with_exponential_backoff__jitter: true
+  api_retry_with_exponential_backoff__max_retries: 10
+  api_request_timeout: 60000
+  api_stream: false
+  force_recache: false
+  load_from_cache: true

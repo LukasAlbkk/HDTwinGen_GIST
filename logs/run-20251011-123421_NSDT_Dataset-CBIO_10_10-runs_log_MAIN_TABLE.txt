@@ -1,0 +1,815 @@
+MainProcess| 2025-10-11 12:34:21,089,89 multiprocessing INFO Starting run 	 | See log at : logs/run-20251011-123421_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:34:21,089,89 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251011-123421_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-11 12:34:21,090,90 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-11 12:34:21,091,91 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-11 12:34:21,108,108 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 10 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,302,302 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,303,303 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,303,303 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,304,304 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,306,306 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,307,307 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,307,307 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-11 12:34:21,309,309 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-11 12:34:21,316,316 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 11 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,316,316 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,316,316 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,316,316 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,317,317 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,317,317 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,318,318 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,318,318 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-11 12:34:21,320,320 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-11 12:34:21,326,326 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 12 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,327,327 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,327,327 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,327,327 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,327,327 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,328,328 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,328,328 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,328,328 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-11 12:34:21,330,330 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-11 12:34:21,336,336 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 13 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,336,336 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,336,336 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,336,336 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,337,337 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,337,337 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,338,338 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,338,338 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-11 12:34:21,340,340 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-11 12:34:21,344,344 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 14 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,345,345 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,345,345 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,345,345 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,345,345 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,346,346 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,346,346 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,346,346 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-11 12:34:21,348,348 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-11 12:34:21,353,353 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 15 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,354,354 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,354,354 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,354,354 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,354,354 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,355,355 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,355,355 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,355,355 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-11 12:34:21,357,357 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-11 12:34:21,361,361 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 16 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,362,362 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,362,362 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,362,362 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,363,363 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,363,363 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,363,363 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,363,363 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-11 12:34:21,366,366 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-11 12:34:21,371,371 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 17 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,371,371 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,371,371 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,371,371 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,372,372 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,372,372 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,373,373 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,373,373 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-11 12:34:21,375,375 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-11 12:34:21,380,380 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 18 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,380,380 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,380,380 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,380,380 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,381,381 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,381,381 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,381,381 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,382,382 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-11 12:34:21,383,383 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-11 12:34:21,388,388 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 19 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 12:34:21,388,388 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 12:34:21,388,388 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_volume and drug_concentration; with the input action of treatment_dosage. This model captures longitudinal tumor dynamics across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+Description of the variables:
+* tumor_volume: Tumor volume in cm^3. Derive from tumor_size (cm; longest diameter) via V = (π/6) * (tumor_size)^3.
+* drug_concentration: Plasma concentration of active treatment agent (mg/L), modeled with a one-compartment PK (first-order elimination) with optional absorption/lag as needed.
+* treatment_dosage: Daily dose of active treatment (mg/day), piecewise-constant control that varies by treatment type (e.g., IMATINIB: 400-800 mg/day, SUNITINIB: 37.5-50 mg/day, REGORAFENIB: 160 mg/day).
+
+Time units:
+* days (treatment_duration_days available in dataset; can be converted to months if needed: months = days/30.44)
+
+Value ranges:
+* tumor_volume: [0.5, 13500] cm^3 (derived from dataset tumor_size range ~1-30 cm)
+* drug_concentration: [0, 15] mg/L (accounting for multiple drug types with different PK profiles)
+* treatment_dosage: [0, 800] mg/day (standardized range across treatment types)
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years (treatment_duration_days)
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+
+MainProcess| 2025-10-11 12:34:21,388,388 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.06% | Tokens remaining 7450]
+MainProcess| 2025-10-11 12:34:21,389,389 multiprocessing ERROR [Error] 'gpt-4-0613'
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 371, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 577, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 536, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 649, in chat_completion_rl_inner
+    model_details = AZURE_MODEL_DETAILS_MAP[model]
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+KeyError: 'gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,389,389 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error='gpt-4-0613'
+MainProcess| 2025-10-11 12:34:21,390,390 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 12:34:21,390,390 multiprocessing INFO Time taken for all runs: 0.30065570800798014s	| 0.005010928466799669 minutes
+MainProcess| 2025-10-11 12:34:21,390,390 multiprocessing INFO [Log found at] logs/run-20251011-123421_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 12:34:21,396,396 multiprocessing INFO process shutting down

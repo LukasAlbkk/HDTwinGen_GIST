@@ -1,0 +1,977 @@
+MainProcess| 2025-11-21 17:10:06,659,659 multiprocessing INFO Starting run 	 | See log at : logs/run-20251121-171006_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-11-21 17:10:06,659,659 multiprocessing INFO [Main Config] {'run': {'samples': 3, 'max_episodes': 1, 'log_path': 'logs/run-20251121-171006_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4o-mini', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 3, 'reflection_history': 2, 'sub_group_resample': 1, 'generations': 3, 'nsdt_patience': 5, 'optimize_params': True, 'optimization': {'patience': 30, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1, 'learning_rate': 0.001, 'weight_decay': 0.001, 'epochs': 200, 'log_interval': 25}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'modelos_novos'}, 'setup': {'trajectories_sweep': [1000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'HDTwinGen_DigitalTwin', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 42, 'seed_runs': 1, 'enable_tests': False, 'cuda': False, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-11-21 17:10:06,660,660 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 3)
+MainProcess| 2025-11-21 17:10:06,662,662 multiprocessing INFO Running Dataset-CBIO NSDT 42
+MainProcess| 2025-11-21 17:10:06,684,684 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 42 | Sampling n=1 keep_top_samples
+MainProcess| 2025-11-21 17:10:06,699,699 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-11-21 17:10:06,699,699 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Digital Twin Model for GIST Cancer (CBIO Longitudinal Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model for Digital Twin generation. The model outputs 2 derivatives
+for STATE variables, using 12 STATIC features and 2 CONTROL inputs.
+
+STRUCTURAL CAUSAL MODEL (SCM) - CRITICAL:
+The model architecture MUST respect the Causal Graph provided below. 
+You must ensure that the derivative calculations for the state variables (msi_score, tmb_nonsynonymous)
+incorporate their specific PARENTS defined in the SCM.
+
+TODO: USE THE FOLLOWING CAUSAL GRAPH (DOT FORMAT) TO DESIGN THE ARCHITECTURE:
+```dot
+digraph "G" {
+sample_coverage [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tumor_purity [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+age_at_diagnosis [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['age_at_seq_reported_years', 'msi_type', 'primary_site']"];
+age_at_seq_reported_years [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['tumor_size']"];
+ethnicity [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+exon_number [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['mutated_genes']"];
+gender [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+metastic_site [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race', 'treatment_response']"];
+mitotic_rate [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+msi_score [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['msi_type', 'primary_site_group', 'recurrence_status']"];
+msi_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race']"];
+mutated_genes [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['recurrence_free_months']"];
+order [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+os_months [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['recurrence_status']"];
+os_status [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race']"];
+patient_id [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['tumor_size']"];
+ped_ind [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['os_status']"];
+pre_therapy_group [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['recurrence_free_months']"];
+primary_site [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['primary_site_group']"];
+primary_site_group [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="[]"];
+race [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+recurrence_free_months [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['recurrence_status']"];
+recurrence_status [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="[]"];
+sample_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+stage_at_diagnosis [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tmb_nonsynonymous [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['tumor_purity']"];
+treatment [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+treatment_details [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+treatment_duration_days [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['race']"];
+treatment_response [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tumor_size [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['msi_score']"];
+variant_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+age_at_seq_reported_years -> age_at_diagnosis [key=0, weight=0.02163352322042924];
+msi_score -> treatment [key=0, weight=1.388366813976404];
+msi_score -> treatment_details [key=0, weight=0.8713628978426905];
+msi_score -> treatment_response [key=0, weight=0.4823769114583333];
+msi_score -> tumor_purity [key=0, weight=11.512294263345195];
+msi_score -> tumor_size [key=0, weight=19.310073554687502];
+msi_type -> age_at_diagnosis [key=0, weight=0.1097855972222222];
+msi_type -> msi_score [key=0, weight=11.18150294391256];
+mutated_genes -> exon_number [key=0, weight=0.4590478017241379];
+os_status -> ped_ind [key=0, weight=0.17454742424242423];
+primary_site -> age_at_diagnosis [key=0, weight=0.1442015579710145];
+primary_site_group -> primary_site [key=0, weight=0.7147855624999999];
+primary_site_group -> msi_score [key=0, weight=0.09013123265855402];
+race -> msi_type [key=0, weight=0.08092745416666665];
+race -> treatment_duration_days [key=0, weight=17632.661846995903];
+race -> metastic_site [key=0, weight=0.4014324024390247];
+recurrence_free_months -> pre_therapy_group [key=0, weight=0.07018258333333333];
+recurrence_free_months -> mutated_genes [key=0, weight=13.557528060810807];
+recurrence_status -> os_months [key=0, weight=101.61958839785316];
+recurrence_status -> recurrence_free_months [key=0, weight=237.2621103392857];
+recurrence_status -> msi_score [key=0, weight=0.38257276160957704];
+treatment_response -> metastic_site [key=0, weight=0.39944758522727275];
+tumor_purity -> tmb_nonsynonymous [key=0, weight=0.3244839084625244];
+tumor_size -> patient_id [key=0, weight=2401.250900943396];
+tumor_size -> age_at_seq_reported_years [key=0, weight=24.758230607418852];
+}
+```
+
+INTERPRETING THE GRAPH FOR THE MODEL:
+1. **msi_score** is primarily driven by:
+   - `msi_type` (Weight 11.18)
+   - `primary_site_group` (Weight 0.09)
+   - `recurrence_status` (Weight 0.38)
+
+2. **tmb_nonsynonymous** is primarily driven by:
+   - `tumor_purity` (Weight 0.32)
+
+INPUTS (order is FIXED - matches env.py):
+1. msi_score
+2. tmb_nonsynonymous
+3. age_at_diagnosis (Static)
+4. gender_encoded (0=Female, 1=Male)
+5. stage_encoded (0=Localized, 1=Metastatic)
+6. primary_site_group_encoded (0=Gastric, 1=Small Bowel, 2=Other)
+7. race_encoded (0=White, 1=Black, 2=Asian, 3=Other)
+8. recurrence_encoded (0=No, 1=Recurrence)
+9. tumor_purity (Static)
+10. msi_type_encoded (0=Stable, 1=Indeterminate, 2=DNR)
+11. sample_type_encoded (0=Primary, 1=Metastasis)
+12. tumor_size (Static)
+13. mitotic_rate (Static)
+14. sample_coverage (Static)
+15. treatment_duration_days (Control)
+16. recurrence_free_months (Control)
+
+OUTPUT:
+(d_msi_score__dt, d_tmb_nonsynonymous__dt)
+
+```
+
+Skeleton Code:
+```python
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    #
+    # SCM-INFORMED ARCHITECTURE for Digital Twin
+    #
+    # REQUIRED STRUCTURE based on Graph:
+    # 1. Shared encoder (process all 16 inputs) -> Latent H
+    #
+    # 2. MSI Pathway (d_msi_score__dt):
+    #    - Must combine Latent H with specific SCM parents: [msi_type_encoded, primary_site_group_encoded, recurrence_encoded]
+    #
+    # 3. TMB Pathway (d_tmb_nonsynonymous__dt):
+    #    - Must combine Latent H with specific SCM parent: [tumor_purity]
+    #
+    # Use Small MLPs (e.g., 64->32) with Dropout(0.3).
+
+  def forward(self,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              gender_encoded: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              primary_site_group_encoded: torch.Tensor,
+              race_encoded: torch.Tensor,
+              recurrence_encoded: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              msi_type_encoded: torch.Tensor,
+              sample_type_encoded: torch.Tensor,
+              tumor_size: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              sample_coverage: torch.Tensor,
+              treatment_duration_days: torch.Tensor,
+              recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # 1. Concatenate all inputs (16 dim)
+    # 2. Forward pass through shared encoder
+    # 3. Forward pass through SCM-specific heads
+    # 4. Clamp derivatives [-1, 1]
+    return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+MainProcess| 2025-11-21 17:10:06,699,699 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 36.51% | Tokens remaining 5201]
+MainProcess| 2025-11-21 17:10:27,686,686 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-11-21 17:10:27,687,687 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"class StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\tself.shared_encoder = nn.Sequential(\n\t\t\tnn.Linear(16, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.Dropout(0.3),\n\t\t\tnn.Linear(64, 32),\n\t\t\tnn.ELU()\n\t\t)\n\t\tself.msi_head = nn.Sequential(\n\t\t\tnn.Linear(32 + 3, 64),  # 3 parents for msi_score\n\t\t\tnn.ELU(),\n\t\t\tnn.Dropout(0.3),\n\t\t\tnn.Linear(64, 32),\n\t\t\tnn.ELU(),\n\t\t\tnn.Linear(32, 1)\n\t\t)\n\t\tself.tmb_head = nn.Sequential(\n\t\t\tnn.Linear(32 + 1, 64),  # 1 parent for tmb_nonsynonymous\n\t\t\tnn.ELU(),\n\t\t\tnn.Dropout(0.3),\n\t\t\tnn.Linear(64, 32),\n\t\t\tnn.ELU(),\n\t\t\tnn.Linear(32, 1)\n\t\t)\n\n\tdef forward(self,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tgender_encoded: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\tprimary_site_group_encoded: torch.Tensor,\n\t\t\trace_encoded: torch.Tensor,\n\t\t\trecurrence_encoded: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tmsi_type_encoded: torch.Tensor,\n\t\t\tsample_type_encoded: torch.Tensor,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tsample_coverage: torch.Tensor,\n\t\t\ttreatment_duration_days: torch.Tensor,\n\t\t\trecurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:\n\t\t# 1. Concatenate all inputs (16 dim)\n\t\tinputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,\n\t\t\tstage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,\n\t\t\ttumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,\n\t\t\tmitotic_rate, sample_coverage, treatment_duration_days, recurrence_free_months), dim=-1)\n\n\t\t# 2. Forward pass through shared encoder\n\t\tlatent_h = self.shared_encoder(inputs)\n\n\t\t# 3. Forward pass through SCM-specific heads\n\t\tmsi_input = torch.cat((latent_h, msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)\n\t\td_msi_score__dt = self.msi_head(msi_input)\n\n\t\ttmb_input = torch.cat((latent_h, tumor_purity), dim=-1)\n\t\td_tmb_nonsynonymous__dt = self.tmb_head(tmb_input)\n\n\t\t# 4. Clamp derivatives [-1, 1]\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1, 1)\n\n\t\treturn (d_msi_score__dt, d_tmb_nonsynonymous__dt)","code_description":"A hybrid neural ODE-like model for simulating GIST cancer dynamics, incorporating a shared encoder and specific pathways for msi_score and tmb_nonsynonymous based on a causal graph."}
+MainProcess| 2025-11-21 17:11:04,050,50 multiprocessing INFO [NSDT | Dataset-CBIO | 42][Generation 0] | Top Fitness: 0.26540350914001465 | Num Programs: 1 | Mean Fitness: 0.26540350914001465 | Fitnesses: [0.26540350914001465] | Current Gen Val Loss: 0.26540350914001465
+MainProcess| 2025-11-21 17:11:04,051,51 multiprocessing INFO [NSDT | Dataset-CBIO | 42][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 42, 'generation': 0, 'top_fitness': 0.26540350914001465, 'num_programs': 1, 'mean_fitness': np.float64(0.26540350914001465), 'fitnesses': [0.26540350914001465], 'current_gen_val_loss': 0.26540350914001465}
+MainProcess| 2025-11-21 17:11:14,683,683 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-11-21 17:11:14,684,684 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Digital Twin Model for GIST Cancer (CBIO Longitudinal Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model for Digital Twin generation. The model outputs 2 derivatives
+for STATE variables, using 12 STATIC features and 2 CONTROL inputs.
+
+STRUCTURAL CAUSAL MODEL (SCM) - CRITICAL:
+The model architecture MUST respect the Causal Graph provided below. 
+You must ensure that the derivative calculations for the state variables (msi_score, tmb_nonsynonymous)
+incorporate their specific PARENTS defined in the SCM.
+
+TODO: USE THE FOLLOWING CAUSAL GRAPH (DOT FORMAT) TO DESIGN THE ARCHITECTURE:
+```dot
+digraph "G" {
+sample_coverage [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tumor_purity [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+age_at_diagnosis [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['age_at_seq_reported_years', 'msi_type', 'primary_site']"];
+age_at_seq_reported_years [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['tumor_size']"];
+ethnicity [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+exon_number [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['mutated_genes']"];
+gender [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+metastic_site [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race', 'treatment_response']"];
+mitotic_rate [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+msi_score [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['msi_type', 'primary_site_group', 'recurrence_status']"];
+msi_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race']"];
+mutated_genes [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['recurrence_free_months']"];
+order [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+os_months [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['recurrence_status']"];
+os_status [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race']"];
+patient_id [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['tumor_size']"];
+ped_ind [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['os_status']"];
+pre_therapy_group [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['recurrence_free_months']"];
+primary_site [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['primary_site_group']"];
+primary_site_group [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="[]"];
+race [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+recurrence_free_months [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['recurrence_status']"];
+recurrence_status [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="[]"];
+sample_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+stage_at_diagnosis [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tmb_nonsynonymous [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['tumor_purity']"];
+treatment [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+treatment_details [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+treatment_duration_days [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['race']"];
+treatment_response [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tumor_size [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['msi_score']"];
+variant_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+age_at_seq_reported_years -> age_at_diagnosis [key=0, weight=0.02163352322042924];
+msi_score -> treatment [key=0, weight=1.388366813976404];
+msi_score -> treatment_details [key=0, weight=0.8713628978426905];
+msi_score -> treatment_response [key=0, weight=0.4823769114583333];
+msi_score -> tumor_purity [key=0, weight=11.512294263345195];
+msi_score -> tumor_size [key=0, weight=19.310073554687502];
+msi_type -> age_at_diagnosis [key=0, weight=0.1097855972222222];
+msi_type -> msi_score [key=0, weight=11.18150294391256];
+mutated_genes -> exon_number [key=0, weight=0.4590478017241379];
+os_status -> ped_ind [key=0, weight=0.17454742424242423];
+primary_site -> age_at_diagnosis [key=0, weight=0.1442015579710145];
+primary_site_group -> primary_site [key=0, weight=0.7147855624999999];
+primary_site_group -> msi_score [key=0, weight=0.09013123265855402];
+race -> msi_type [key=0, weight=0.08092745416666665];
+race -> treatment_duration_days [key=0, weight=17632.661846995903];
+race -> metastic_site [key=0, weight=0.4014324024390247];
+recurrence_free_months -> pre_therapy_group [key=0, weight=0.07018258333333333];
+recurrence_free_months -> mutated_genes [key=0, weight=13.557528060810807];
+recurrence_status -> os_months [key=0, weight=101.61958839785316];
+recurrence_status -> recurrence_free_months [key=0, weight=237.2621103392857];
+recurrence_status -> msi_score [key=0, weight=0.38257276160957704];
+treatment_response -> metastic_site [key=0, weight=0.39944758522727275];
+tumor_purity -> tmb_nonsynonymous [key=0, weight=0.3244839084625244];
+tumor_size -> patient_id [key=0, weight=2401.250900943396];
+tumor_size -> age_at_seq_reported_years [key=0, weight=24.758230607418852];
+}
+```
+
+INTERPRETING THE GRAPH FOR THE MODEL:
+1. **msi_score** is primarily driven by:
+   - `msi_type` (Weight 11.18)
+   - `primary_site_group` (Weight 0.09)
+   - `recurrence_status` (Weight 0.38)
+
+2. **tmb_nonsynonymous** is primarily driven by:
+   - `tumor_purity` (Weight 0.32)
+
+INPUTS (order is FIXED - matches env.py):
+1. msi_score
+2. tmb_nonsynonymous
+3. age_at_diagnosis (Static)
+4. gender_encoded (0=Female, 1=Male)
+5. stage_encoded (0=Localized, 1=Metastatic)
+6. primary_site_group_encoded (0=Gastric, 1=Small Bowel, 2=Other)
+7. race_encoded (0=White, 1=Black, 2=Asian, 3=Other)
+8. recurrence_encoded (0=No, 1=Recurrence)
+9. tumor_purity (Static)
+10. msi_type_encoded (0=Stable, 1=Indeterminate, 2=DNR)
+11. sample_type_encoded (0=Primary, 1=Metastasis)
+12. tumor_size (Static)
+13. mitotic_rate (Static)
+14. sample_coverage (Static)
+15. treatment_duration_days (Control)
+16. recurrence_free_months (Control)
+
+OUTPUT:
+(d_msi_score__dt, d_tmb_nonsynonymous__dt)
+
+```
+
+Skeleton Code:
+```python
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    #
+    # SCM-INFORMED ARCHITECTURE for Digital Twin
+    #
+    # REQUIRED STRUCTURE based on Graph:
+    # 1. Shared encoder (process all 16 inputs) -> Latent H
+    #
+    # 2. MSI Pathway (d_msi_score__dt):
+    #    - Must combine Latent H with specific SCM parents: [msi_type_encoded, primary_site_group_encoded, recurrence_encoded]
+    #
+    # 3. TMB Pathway (d_tmb_nonsynonymous__dt):
+    #    - Must combine Latent H with specific SCM parent: [tumor_purity]
+    #
+    # Use Small MLPs (e.g., 64->32) with Dropout(0.3).
+
+  def forward(self,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              gender_encoded: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              primary_site_group_encoded: torch.Tensor,
+              race_encoded: torch.Tensor,
+              recurrence_encoded: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              msi_type_encoded: torch.Tensor,
+              sample_type_encoded: torch.Tensor,
+              tumor_size: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              sample_coverage: torch.Tensor,
+              treatment_duration_days: torch.Tensor,
+              recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # 1. Concatenate all inputs (16 dim)
+    # 2. Forward pass through shared encoder
+    # 3. Forward pass through SCM-specific heads
+    # 4. Clamp derivatives [-1, 1]
+    return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+MainProcess| 2025-11-21 17:11:14,685,685 multiprocessing INFO [User] 
+You generated the following code completions, which then had their parameters optimized to the training dataset. Please reflect on how you can improve the code to minimize the validation loss to 1e-6 or less. The code examples are delineated by ###.
+
+Here are your previous iterations the best programs generated. Use it to see if you have exhausted white box models, i.e. when a white box model repeats with the same val loss and then only add black box models to the white box models:```
+Iteration 0. Best Val Loss: 0.26540350914001465. Model description: A hybrid neural ODE-like model for simulating GIST cancer dynamics, incorporating a shared encoder and specific pathways for msi_score and tmb_nonsynonymous based on a causal graph.
+```
+
+Here are the top code completions so far that you have generated, sorted for the lowest validation loss last:```
+
+Val Loss: 0.265 (Where the val loss per dimension is tumor_size val loss: 0, msi_score val loss: 0.324, tmb_nonsynonymous val loss: 0.206) Iteration: 0
+###
+```
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		self.shared_encoder = nn.Sequential(
+			nn.Linear(16, 64),
+			nn.ELU(),
+			nn.Dropout(0.3),
+			nn.Linear(64, 32),
+			nn.ELU()
+		)
+		self.msi_head = nn.Sequential(
+			nn.Linear(32 + 3, 64),  # 3 parents for msi_score
+			nn.ELU(),
+			nn.Dropout(0.3),
+			nn.Linear(64, 32),
+			nn.ELU(),
+			nn.Linear(32, 1)
+		)
+		self.tmb_head = nn.Sequential(
+			nn.Linear(32 + 1, 64),  # 1 parent for tmb_nonsynonymous
+			nn.ELU(),
+			nn.Dropout(0.3),
+			nn.Linear(64, 32),
+			nn.ELU(),
+			nn.Linear(32, 1)
+		)
+
+	def forward(self,
+			msi_score: torch.Tensor,
+			tmb_nonsynonymous: torch.Tensor,
+			age_at_diagnosis: torch.Tensor,
+			gender_encoded: torch.Tensor,
+			stage_encoded: torch.Tensor,
+			primary_site_group_encoded: torch.Tensor,
+			race_encoded: torch.Tensor,
+			recurrence_encoded: torch.Tensor,
+			tumor_purity: torch.Tensor,
+			msi_type_encoded: torch.Tensor,
+			sample_type_encoded: torch.Tensor,
+			tumor_size: torch.Tensor,
+			mitotic_rate: torch.Tensor,
+			sample_coverage: torch.Tensor,
+			treatment_duration_days: torch.Tensor,
+			recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+		# 1. Concatenate all inputs (16 dim)
+		inputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,
+			stage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,
+			tumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,
+			mitotic_rate, sample_coverage, treatment_duration_days, recurrence_free_months), dim=-1)
+
+		# 2. Forward pass through shared encoder
+		latent_h = self.shared_encoder(inputs)
+
+		# 3. Forward pass through SCM-specific heads
+		msi_input = torch.cat((latent_h, msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)
+		d_msi_score__dt = self.msi_head(msi_input)
+
+		tmb_input = torch.cat((latent_h, tumor_purity), dim=-1)
+		d_tmb_nonsynonymous__dt = self.tmb_head(tmb_input)
+
+		# 4. Clamp derivatives [-1, 1]
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1, 1)
+
+		return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+optimized_parameters = {}
+###
+
+
+```
+
+Please reflect on how you can improve the code to fit the dataset as accurately as possible, and be interpretable. Think step-by-step. Provide only actionable feedback, that has direct changes to the code. Do not write out the code, only describe how it can be improved. Where applicable use the values of the optimized parameters to reason how the code can be improved to fit the dataset as accurately as possible. This is for generating new code for the next iteration 1 out of 3.
+
+MainProcess| 2025-11-21 17:11:14,685,685 multiprocessing INFO [Assistant] To improve the model and minimize the validation loss to 1e-6 or less, consider the following actionable feedback:
+
+1. **Increase Model Capacity**: The current architecture may be too simple for the complexity of the data. Consider increasing the number of units in the hidden layers of both the shared encoder and the specific heads. For example, you could change the hidden layer sizes from 64 to 128 or 256 in the shared encoder and the heads.
+
+2. **Add More Layers**: Adding additional layers to the shared encoder and the specific heads can help the model learn more complex representations. For instance, you could add another layer after the existing ones in both the shared encoder and the heads.
+
+3. **Adjust Activation Functions**: While ELU is a good choice, experimenting with other activation functions like LeakyReLU or Swish could yield better results. These functions can help mitigate issues with vanishing gradients and improve learning dynamics.
+
+4. **Refine Dropout Rates**: The current dropout rate of 0.3 may be too high, potentially leading to underfitting. Experiment with lower dropout rates (e.g., 0.1 or 0.2) to see if it improves performance.
+
+5. **Use Layer Normalization**: Instead of dropout, consider using Layer Normalization after each linear layer. This can help stabilize training and improve convergence, especially in deeper networks.
+
+6. **Modify Input Handling**: Ensure that the input tensors are properly normalized or standardized before being fed into the model. This can help the model learn more effectively by ensuring that all inputs are on a similar scale.
+
+7. **Experiment with Residual Connections**: Adding residual connections in the MLPs can help with gradient flow and allow the model to learn more effectively, especially in deeper architectures.
+
+8. **Fine-tune the Clamping**: The current clamping range of [-1, 1] may not be appropriate for the specific outputs. Analyze the distribution of the target variables and adjust the clamping range accordingly to ensure that the model outputs remain physiologically plausible.
+
+9. **Hyperparameter Tuning**: Conduct a systematic search for optimal hyperparameters, including learning rate, batch size, and weight initialization strategies. Using techniques like grid search or random search can help identify the best configuration.
+
+10. **Regularization Techniques**: Consider adding L2 regularization to the loss function to prevent overfitting, especially if the model complexity is increased.
+
+By implementing these changes, you can enhance the model's capacity to learn from the dataset, potentially leading to a significant reduction in validation loss.
+MainProcess| 2025-11-21 17:11:14,685,685 multiprocessing INFO [User] 
+Please now regenerate the code function, with the aim to improve the code to achieve a lower validation error. Use the feedback where applicable. You are generating code for iteration 1 out of 3 total iterations. When generating code if you are unsure about something, take your best guess. You have to generate code, and cannot give an empty string answer.
+
+Please always only fill in the following code skeleton:```
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    #
+    # SCM-INFORMED ARCHITECTURE for Digital Twin
+    #
+    # REQUIRED STRUCTURE based on Graph:
+    # 1. Shared encoder (process all 16 inputs) -> Latent H
+    #
+    # 2. MSI Pathway (d_msi_score__dt):
+    #    - Must combine Latent H with specific SCM parents: [msi_type_encoded, primary_site_group_encoded, recurrence_encoded]
+    #
+    # 3. TMB Pathway (d_tmb_nonsynonymous__dt):
+    #    - Must combine Latent H with specific SCM parent: [tumor_purity]
+    #
+    # Use Small MLPs (e.g., 64->32) with Dropout(0.3).
+
+  def forward(self,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              gender_encoded: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              primary_site_group_encoded: torch.Tensor,
+              race_encoded: torch.Tensor,
+              recurrence_encoded: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              msi_type_encoded: torch.Tensor,
+              sample_type_encoded: torch.Tensor,
+              tumor_size: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              sample_coverage: torch.Tensor,
+              treatment_duration_days: torch.Tensor,
+              recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # 1. Concatenate all inputs (16 dim)
+    # 2. Forward pass through shared encoder
+    # 3. Forward pass through SCM-specific heads
+    # 4. Clamp derivatives [-1, 1]
+    return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+You cannot change the code skeleton, or input variables.
+
+MainProcess| 2025-11-21 17:11:14,685,685 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 61.94% | Tokens remaining 3118]
+MainProcess| 2025-11-21 17:11:37,409,409 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-11-21 17:11:37,410,410 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"class StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\t# Shared encoder\n\t\tself.shared_encoder = nn.Sequential(\n\t\t\tnn.Linear(16, 128),  # Increased capacity\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(128),  # Added Layer Normalization\n\t\t\tnn.Dropout(0.2),  # Reduced dropout rate\n\t\t\tnn.Linear(128, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(64)\n\t\t)\n\t\t# MSI Pathway\n\t\tself.msi_head = nn.Sequential(\n\t\t\tnn.Linear(64 + 3, 128),  # 3 parents for msi_score\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(128),\n\t\t\tnn.Dropout(0.2),\n\t\t\tnn.Linear(128, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\t\t# TMB Pathway\n\t\tself.tmb_head = nn.Sequential(\n\t\t\tnn.Linear(64 + 1, 128),  # 1 parent for tmb_nonsynonymous\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(128),\n\t\t\tnn.Dropout(0.2),\n\t\t\tnn.Linear(128, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\n\tdef forward(self,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tgender_encoded: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\tprimary_site_group_encoded: torch.Tensor,\n\t\t\trace_encoded: torch.Tensor,\n\t\t\trecurrence_encoded: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tmsi_type_encoded: torch.Tensor,\n\t\t\tsample_type_encoded: torch.Tensor,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tsample_coverage: torch.Tensor,\n\t\t\ttreatment_duration_days: torch.Tensor,\n\t\t\trecurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:\n\t\t# 1. Concatenate all inputs (16 dim)\n\t\tinputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,\n\t\t\tstage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,\n\t\t\ttumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,\n\t\t\tmitotic_rate, sample_coverage, treatment_duration_days, recurrence_free_months), dim=-1)\n\n\t\t# 2. Forward pass through shared encoder\n\t\tlatent_h = self.shared_encoder(inputs)\n\n\t\t# 3. Forward pass through SCM-specific heads\n\t\tmsi_input = torch.cat((latent_h, msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)\n\t\td_msi_score__dt = self.msi_head(msi_input)\n\n\t\ttmb_input = torch.cat((latent_h, tumor_purity), dim=-1)\n\t\td_tmb_nonsynonymous__dt = self.tmb_head(tmb_input)\n\n\t\t# 4. Clamp derivatives [-1, 1]\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1, 1)\n\n\t\treturn (d_msi_score__dt, d_tmb_nonsynonymous__dt)","code_description":"A hybrid neural ODE-like model for simulating GIST cancer dynamics, incorporating a shared encoder and specific pathways for msi_score and tmb_nonsynonymous based on a causal graph, with improved architecture for lower validation loss."}
+MainProcess| 2025-11-21 17:12:33,268,268 multiprocessing INFO [NSDT | Dataset-CBIO | 42][Generation 1] | Top Fitness: 0.26540350914001465 | Num Programs: 2 | Mean Fitness: 0.26644155383110046 | Fitnesses: [0.26540350914001465, 0.2674795985221863] | Current Gen Val Loss: 0.2674795985221863
+MainProcess| 2025-11-21 17:12:33,269,269 multiprocessing INFO [NSDT | Dataset-CBIO | 42][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 42, 'generation': 1, 'top_fitness': 0.26540350914001465, 'num_programs': 2, 'mean_fitness': np.float64(0.26644155383110046), 'fitnesses': [0.26540350914001465, 0.2674795985221863], 'current_gen_val_loss': 0.2674795985221863}
+MainProcess| 2025-11-21 17:12:46,118,118 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-11-21 17:12:46,119,119 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Digital Twin Model for GIST Cancer (CBIO Longitudinal Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model for Digital Twin generation. The model outputs 2 derivatives
+for STATE variables, using 12 STATIC features and 2 CONTROL inputs.
+
+STRUCTURAL CAUSAL MODEL (SCM) - CRITICAL:
+The model architecture MUST respect the Causal Graph provided below. 
+You must ensure that the derivative calculations for the state variables (msi_score, tmb_nonsynonymous)
+incorporate their specific PARENTS defined in the SCM.
+
+TODO: USE THE FOLLOWING CAUSAL GRAPH (DOT FORMAT) TO DESIGN THE ARCHITECTURE:
+```dot
+digraph "G" {
+sample_coverage [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tumor_purity [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+age_at_diagnosis [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['age_at_seq_reported_years', 'msi_type', 'primary_site']"];
+age_at_seq_reported_years [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['tumor_size']"];
+ethnicity [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+exon_number [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['mutated_genes']"];
+gender [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+metastic_site [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race', 'treatment_response']"];
+mitotic_rate [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+msi_score [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['msi_type', 'primary_site_group', 'recurrence_status']"];
+msi_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race']"];
+mutated_genes [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['recurrence_free_months']"];
+order [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+os_months [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['recurrence_status']"];
+os_status [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['race']"];
+patient_id [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['tumor_size']"];
+ped_ind [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['os_status']"];
+pre_therapy_group [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['recurrence_free_months']"];
+primary_site [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['primary_site_group']"];
+primary_site_group [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="[]"];
+race [causal_mechanism="Empirical Distribution", parents_during_fit="[]"];
+recurrence_free_months [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['recurrence_status']"];
+recurrence_status [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="[]"];
+sample_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+stage_at_diagnosis [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tmb_nonsynonymous [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['tumor_purity']"];
+treatment [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+treatment_details [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+treatment_duration_days [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['race']"];
+treatment_response [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+tumor_size [causal_mechanism="AdditiveNoiseModel using Pipeline", parents_during_fit="['msi_score']"];
+variant_type [causal_mechanism="Discrete AdditiveNoiseModel using HistGradientBoostingRegressor", parents_during_fit="['msi_score']"];
+age_at_seq_reported_years -> age_at_diagnosis [key=0, weight=0.02163352322042924];
+msi_score -> treatment [key=0, weight=1.388366813976404];
+msi_score -> treatment_details [key=0, weight=0.8713628978426905];
+msi_score -> treatment_response [key=0, weight=0.4823769114583333];
+msi_score -> tumor_purity [key=0, weight=11.512294263345195];
+msi_score -> tumor_size [key=0, weight=19.310073554687502];
+msi_type -> age_at_diagnosis [key=0, weight=0.1097855972222222];
+msi_type -> msi_score [key=0, weight=11.18150294391256];
+mutated_genes -> exon_number [key=0, weight=0.4590478017241379];
+os_status -> ped_ind [key=0, weight=0.17454742424242423];
+primary_site -> age_at_diagnosis [key=0, weight=0.1442015579710145];
+primary_site_group -> primary_site [key=0, weight=0.7147855624999999];
+primary_site_group -> msi_score [key=0, weight=0.09013123265855402];
+race -> msi_type [key=0, weight=0.08092745416666665];
+race -> treatment_duration_days [key=0, weight=17632.661846995903];
+race -> metastic_site [key=0, weight=0.4014324024390247];
+recurrence_free_months -> pre_therapy_group [key=0, weight=0.07018258333333333];
+recurrence_free_months -> mutated_genes [key=0, weight=13.557528060810807];
+recurrence_status -> os_months [key=0, weight=101.61958839785316];
+recurrence_status -> recurrence_free_months [key=0, weight=237.2621103392857];
+recurrence_status -> msi_score [key=0, weight=0.38257276160957704];
+treatment_response -> metastic_site [key=0, weight=0.39944758522727275];
+tumor_purity -> tmb_nonsynonymous [key=0, weight=0.3244839084625244];
+tumor_size -> patient_id [key=0, weight=2401.250900943396];
+tumor_size -> age_at_seq_reported_years [key=0, weight=24.758230607418852];
+}
+```
+
+INTERPRETING THE GRAPH FOR THE MODEL:
+1. **msi_score** is primarily driven by:
+   - `msi_type` (Weight 11.18)
+   - `primary_site_group` (Weight 0.09)
+   - `recurrence_status` (Weight 0.38)
+
+2. **tmb_nonsynonymous** is primarily driven by:
+   - `tumor_purity` (Weight 0.32)
+
+INPUTS (order is FIXED - matches env.py):
+1. msi_score
+2. tmb_nonsynonymous
+3. age_at_diagnosis (Static)
+4. gender_encoded (0=Female, 1=Male)
+5. stage_encoded (0=Localized, 1=Metastatic)
+6. primary_site_group_encoded (0=Gastric, 1=Small Bowel, 2=Other)
+7. race_encoded (0=White, 1=Black, 2=Asian, 3=Other)
+8. recurrence_encoded (0=No, 1=Recurrence)
+9. tumor_purity (Static)
+10. msi_type_encoded (0=Stable, 1=Indeterminate, 2=DNR)
+11. sample_type_encoded (0=Primary, 1=Metastasis)
+12. tumor_size (Static)
+13. mitotic_rate (Static)
+14. sample_coverage (Static)
+15. treatment_duration_days (Control)
+16. recurrence_free_months (Control)
+
+OUTPUT:
+(d_msi_score__dt, d_tmb_nonsynonymous__dt)
+
+```
+
+Skeleton Code:
+```python
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    #
+    # SCM-INFORMED ARCHITECTURE for Digital Twin
+    #
+    # REQUIRED STRUCTURE based on Graph:
+    # 1. Shared encoder (process all 16 inputs) -> Latent H
+    #
+    # 2. MSI Pathway (d_msi_score__dt):
+    #    - Must combine Latent H with specific SCM parents: [msi_type_encoded, primary_site_group_encoded, recurrence_encoded]
+    #
+    # 3. TMB Pathway (d_tmb_nonsynonymous__dt):
+    #    - Must combine Latent H with specific SCM parent: [tumor_purity]
+    #
+    # Use Small MLPs (e.g., 64->32) with Dropout(0.3).
+
+  def forward(self,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              gender_encoded: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              primary_site_group_encoded: torch.Tensor,
+              race_encoded: torch.Tensor,
+              recurrence_encoded: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              msi_type_encoded: torch.Tensor,
+              sample_type_encoded: torch.Tensor,
+              tumor_size: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              sample_coverage: torch.Tensor,
+              treatment_duration_days: torch.Tensor,
+              recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # 1. Concatenate all inputs (16 dim)
+    # 2. Forward pass through shared encoder
+    # 3. Forward pass through SCM-specific heads
+    # 4. Clamp derivatives [-1, 1]
+    return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+MainProcess| 2025-11-21 17:12:46,119,119 multiprocessing INFO [User] 
+You generated the following code completions, which then had their parameters optimized to the training dataset. Please reflect on how you can improve the code to minimize the validation loss to 1e-6 or less. The code examples are delineated by ###.
+
+Here are your previous iterations the best programs generated. Use it to see if you have exhausted white box models, i.e. when a white box model repeats with the same val loss and then only add black box models to the white box models:```
+Iteration 0. Best Val Loss: 0.26540350914001465. Model description: A hybrid neural ODE-like model for simulating GIST cancer dynamics, incorporating a shared encoder and specific pathways for msi_score and tmb_nonsynonymous based on a causal graph.
+Iteration 1. Best Val Loss: 0.26540350914001465. Model description: A hybrid neural ODE-like model for simulating GIST cancer dynamics, incorporating a shared encoder and specific pathways for msi_score and tmb_nonsynonymous based on a causal graph.
+```
+
+Here are the top code completions so far that you have generated, sorted for the lowest validation loss last:```
+
+Val Loss: 0.267 (Where the val loss per dimension is tumor_size val loss: 0, msi_score val loss: 0.324, tmb_nonsynonymous val loss: 0.211) Iteration: 1
+###
+```
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		# Shared encoder
+		self.shared_encoder = nn.Sequential(
+			nn.Linear(16, 128),  # Increased capacity
+			nn.ELU(),
+			nn.LayerNorm(128),  # Added Layer Normalization
+			nn.Dropout(0.2),  # Reduced dropout rate
+			nn.Linear(128, 64),
+			nn.ELU(),
+			nn.LayerNorm(64)
+		)
+		# MSI Pathway
+		self.msi_head = nn.Sequential(
+			nn.Linear(64 + 3, 128),  # 3 parents for msi_score
+			nn.ELU(),
+			nn.LayerNorm(128),
+			nn.Dropout(0.2),
+			nn.Linear(128, 64),
+			nn.ELU(),
+			nn.Linear(64, 1)
+		)
+		# TMB Pathway
+		self.tmb_head = nn.Sequential(
+			nn.Linear(64 + 1, 128),  # 1 parent for tmb_nonsynonymous
+			nn.ELU(),
+			nn.LayerNorm(128),
+			nn.Dropout(0.2),
+			nn.Linear(128, 64),
+			nn.ELU(),
+			nn.Linear(64, 1)
+		)
+
+	def forward(self,
+			msi_score: torch.Tensor,
+			tmb_nonsynonymous: torch.Tensor,
+			age_at_diagnosis: torch.Tensor,
+			gender_encoded: torch.Tensor,
+			stage_encoded: torch.Tensor,
+			primary_site_group_encoded: torch.Tensor,
+			race_encoded: torch.Tensor,
+			recurrence_encoded: torch.Tensor,
+			tumor_purity: torch.Tensor,
+			msi_type_encoded: torch.Tensor,
+			sample_type_encoded: torch.Tensor,
+			tumor_size: torch.Tensor,
+			mitotic_rate: torch.Tensor,
+			sample_coverage: torch.Tensor,
+			treatment_duration_days: torch.Tensor,
+			recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+		# 1. Concatenate all inputs (16 dim)
+		inputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,
+			stage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,
+			tumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,
+			mitotic_rate, sample_coverage, treatment_duration_days, recurrence_free_months), dim=-1)
+
+		# 2. Forward pass through shared encoder
+		latent_h = self.shared_encoder(inputs)
+
+		# 3. Forward pass through SCM-specific heads
+		msi_input = torch.cat((latent_h, msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)
+		d_msi_score__dt = self.msi_head(msi_input)
+
+		tmb_input = torch.cat((latent_h, tumor_purity), dim=-1)
+		d_tmb_nonsynonymous__dt = self.tmb_head(tmb_input)
+
+		# 4. Clamp derivatives [-1, 1]
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1, 1)
+
+		return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+optimized_parameters = {}
+###
+
+
+
+Val Loss: 0.265 (Where the val loss per dimension is tumor_size val loss: 0, msi_score val loss: 0.324, tmb_nonsynonymous val loss: 0.206) Iteration: 0
+###
+```
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		self.shared_encoder = nn.Sequential(
+			nn.Linear(16, 64),
+			nn.ELU(),
+			nn.Dropout(0.3),
+			nn.Linear(64, 32),
+			nn.ELU()
+		)
+		self.msi_head = nn.Sequential(
+			nn.Linear(32 + 3, 64),  # 3 parents for msi_score
+			nn.ELU(),
+			nn.Dropout(0.3),
+			nn.Linear(64, 32),
+			nn.ELU(),
+			nn.Linear(32, 1)
+		)
+		self.tmb_head = nn.Sequential(
+			nn.Linear(32 + 1, 64),  # 1 parent for tmb_nonsynonymous
+			nn.ELU(),
+			nn.Dropout(0.3),
+			nn.Linear(64, 32),
+			nn.ELU(),
+			nn.Linear(32, 1)
+		)
+
+	def forward(self,
+			msi_score: torch.Tensor,
+			tmb_nonsynonymous: torch.Tensor,
+			age_at_diagnosis: torch.Tensor,
+			gender_encoded: torch.Tensor,
+			stage_encoded: torch.Tensor,
+			primary_site_group_encoded: torch.Tensor,
+			race_encoded: torch.Tensor,
+			recurrence_encoded: torch.Tensor,
+			tumor_purity: torch.Tensor,
+			msi_type_encoded: torch.Tensor,
+			sample_type_encoded: torch.Tensor,
+			tumor_size: torch.Tensor,
+			mitotic_rate: torch.Tensor,
+			sample_coverage: torch.Tensor,
+			treatment_duration_days: torch.Tensor,
+			recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+		# 1. Concatenate all inputs (16 dim)
+		inputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,
+			stage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,
+			tumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,
+			mitotic_rate, sample_coverage, treatment_duration_days, recurrence_free_months), dim=-1)
+
+		# 2. Forward pass through shared encoder
+		latent_h = self.shared_encoder(inputs)
+
+		# 3. Forward pass through SCM-specific heads
+		msi_input = torch.cat((latent_h, msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)
+		d_msi_score__dt = self.msi_head(msi_input)
+
+		tmb_input = torch.cat((latent_h, tumor_purity), dim=-1)
+		d_tmb_nonsynonymous__dt = self.tmb_head(tmb_input)
+
+		# 4. Clamp derivatives [-1, 1]
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1, 1)
+
+		return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+optimized_parameters = {}
+###
+
+
+```
+
+Please reflect on how you can improve the code to fit the dataset as accurately as possible, and be interpretable. Think step-by-step. Provide only actionable feedback, that has direct changes to the code. Do not write out the code, only describe how it can be improved. Where applicable use the values of the optimized parameters to reason how the code can be improved to fit the dataset as accurately as possible. This is for generating new code for the next iteration 2 out of 3.
+
+MainProcess| 2025-11-21 17:12:46,120,120 multiprocessing INFO [Assistant] To improve the model's performance and minimize the validation loss further, consider the following actionable steps:
+
+1. **Increase Model Capacity**: 
+   - The current architecture may benefit from increased capacity in the shared encoder and the heads. Consider adding more layers or increasing the number of units in the existing layers. For example, you could change the shared encoder to have layers like `nn.Linear(16, 256)` followed by `nn.Linear(256, 128)` to allow for more complex representations.
+
+2. **Adjust Dropout Rates**:
+   - The dropout rates are currently set at 0.2 and 0.3. Experiment with slightly lower dropout rates (e.g., 0.1) in the shared encoder and heads to retain more information during training, especially since the model is already underfitting with a validation loss around 0.26.
+
+3. **Layer Normalization**:
+   - While Layer Normalization is beneficial, consider placing it after the activation functions instead of before. This can help stabilize the training process and improve convergence.
+
+4. **Activation Functions**:
+   - The use of ELU is good, but you might also want to experiment with LeakyReLU, which can help mitigate the issue of dying neurons. This could be particularly useful in deeper networks.
+
+5. **Residual Connections**:
+   - Introduce residual connections in the MLPs, especially in the heads. This can help the model learn more effectively by allowing gradients to flow through the network without vanishing.
+
+6. **Output Clamping**:
+   - The current clamping of derivatives to the range [-1, 1] is good for stability, but consider adjusting the range based on the expected physiological limits of `msi_score` and `tmb_nonsynonymous`. If the expected values are known, clamping to those specific ranges could improve performance.
+
+7. **Feature Engineering**:
+   - Ensure that the input features are appropriately scaled or normalized. If not already done, consider standardizing the static features (age_at_diagnosis, tumor_purity, etc.) to have zero mean and unit variance.
+
+8. **Hyperparameter Tuning**:
+   - Conduct a systematic search for optimal hyperparameters, including learning rate, batch size, and the number of epochs. A learning rate scheduler could also be beneficial to adjust the learning rate dynamically during training.
+
+9. **Regularization Techniques**:
+   - Consider adding L2 regularization to the optimizer to prevent overfitting, especially if the model complexity is increased.
+
+10. **Training Strategy**:
+    - If not already implemented, consider using early stopping based on validation loss to prevent overfitting and to find the best model during training.
+
+By implementing these changes, you can enhance the model's ability to fit the dataset more accurately while maintaining interpretability. Each of these steps should be tested iteratively to assess their impact on validation loss.
+MainProcess| 2025-11-21 17:12:46,120,120 multiprocessing INFO [User] 
+Please now regenerate the code function, with the aim to improve the code to achieve a lower validation error. Use the feedback where applicable. You are generating code for iteration 2 out of 3 total iterations. When generating code if you are unsure about something, take your best guess. You have to generate code, and cannot give an empty string answer.
+
+Please always only fill in the following code skeleton:```
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    #
+    # SCM-INFORMED ARCHITECTURE for Digital Twin
+    #
+    # REQUIRED STRUCTURE based on Graph:
+    # 1. Shared encoder (process all 16 inputs) -> Latent H
+    #
+    # 2. MSI Pathway (d_msi_score__dt):
+    #    - Must combine Latent H with specific SCM parents: [msi_type_encoded, primary_site_group_encoded, recurrence_encoded]
+    #
+    # 3. TMB Pathway (d_tmb_nonsynonymous__dt):
+    #    - Must combine Latent H with specific SCM parent: [tumor_purity]
+    #
+    # Use Small MLPs (e.g., 64->32) with Dropout(0.3).
+
+  def forward(self,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              gender_encoded: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              primary_site_group_encoded: torch.Tensor,
+              race_encoded: torch.Tensor,
+              recurrence_encoded: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              msi_type_encoded: torch.Tensor,
+              sample_type_encoded: torch.Tensor,
+              tumor_size: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              sample_coverage: torch.Tensor,
+              treatment_duration_days: torch.Tensor,
+              recurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # 1. Concatenate all inputs (16 dim)
+    # 2. Forward pass through shared encoder
+    # 3. Forward pass through SCM-specific heads
+    # 4. Clamp derivatives [-1, 1]
+    return (d_msi_score__dt, d_tmb_nonsynonymous__dt)
+```
+You cannot change the code skeleton, or input variables.
+
+MainProcess| 2025-11-21 17:12:46,120,120 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 73.60% | Tokens remaining 2163]
+MainProcess| 2025-11-21 17:13:06,091,91 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-11-21 17:13:06,091,91 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"class StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\t# Shared encoder\n\t\tself.shared_encoder = nn.Sequential(\n\t\t\tnn.Linear(16, 256),  # Increased capacity\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(256),  # Added Layer Normalization after activation\n\t\t\tnn.Dropout(0.1),  # Reduced dropout rate\n\t\t\tnn.Linear(256, 128),\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(128)\n\t\t)\n\t\t# MSI Pathway\n\t\tself.msi_head = nn.Sequential(\n\t\t\tnn.Linear(128 + 3, 128),  # 3 parents for msi_score\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(128),\n\t\t\tnn.Dropout(0.1),\n\t\t\tnn.Linear(128, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\t\t# TMB Pathway\n\t\tself.tmb_head = nn.Sequential(\n\t\t\tnn.Linear(128 + 1, 128),  # 1 parent for tmb_nonsynonymous\n\t\t\tnn.ELU(),\n\t\t\tnn.LayerNorm(128),\n\t\t\tnn.Dropout(0.1),\n\t\t\tnn.Linear(128, 64),\n\t\t\tnn.ELU(),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\n\tdef forward(self,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tgender_encoded: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\tprimary_site_group_encoded: torch.Tensor,\n\t\t\trace_encoded: torch.Tensor,\n\t\t\trecurrence_encoded: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tmsi_type_encoded: torch.Tensor,\n\t\t\tsample_type_encoded: torch.Tensor,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tsample_coverage: torch.Tensor,\n\t\t\ttreatment_duration_days: torch.Tensor,\n\t\t\trecurrence_free_months: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:\n\t\t# 1. Concatenate all inputs (16 dim)\n\t\tinputs = torch.cat((msi_score, tmb_nonsynonymous, age_at_diagnosis, gender_encoded,\n\t\t\tstage_encoded, primary_site_group_encoded, race_encoded, recurrence_encoded,\n\t\t\ttumor_purity, msi_type_encoded, sample_type_encoded, tumor_size,\n\t\t\tmitotic_rate, sample_coverage, treatment_duration_days, recurrence_free_months), dim=-1)\n\n\t\t# 2. Forward pass through shared encoder\n\t\tlatent_h = self.shared_encoder(inputs)\n\n\t\t# 3. Forward pass through SCM-specific heads\n\t\tmsi_input = torch.cat((latent_h, msi_type_encoded, primary_site_group_encoded, recurrence_encoded), dim=-1)\n\t\td_msi_score__dt = self.msi_head(msi_input)\n\n\t\ttmb_input = torch.cat((latent_h, tumor_purity), dim=-1)\n\t\td_tmb_nonsynonymous__dt = self.tmb_head(tmb_input)\n\n\t\t# 4. Clamp derivatives [-1, 1]\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -1, 1)\n\n\t\treturn (d_msi_score__dt, d_tmb_nonsynonymous__dt)","code_description":"A hybrid neural ODE-like model for simulating GIST cancer dynamics, incorporating a shared encoder and specific pathways for msi_score and tmb_nonsynonymous based on a causal graph, with improved architecture for lower validation loss."}
+MainProcess| 2025-11-21 17:14:03,585,585 multiprocessing INFO [NSDT | Dataset-CBIO | 42][Generation 2] | Top Fitness: 0.26540350914001465 | Num Programs: 3 | Mean Fitness: 0.2699257433414459 | Fitnesses: [0.26540350914001465, 0.2674795985221863, 0.27689412236213684] | Current Gen Val Loss: 0.27689412236213684
+MainProcess| 2025-11-21 17:14:03,586,586 multiprocessing INFO [NSDT | Dataset-CBIO | 42][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 42, 'generation': 2, 'top_fitness': 0.26540350914001465, 'num_programs': 3, 'mean_fitness': np.float64(0.2699257433414459), 'fitnesses': [0.26540350914001465, 0.2674795985221863, 0.27689412236213684], 'current_gen_val_loss': 0.27689412236213684}
+MainProcess| 2025-11-21 17:14:03,587,587 multiprocessing INFO [Model code saved to] modelos_novos/best_model_Dataset-CBIO_seed42.py
+MainProcess| 2025-11-21 17:14:03,587,587 multiprocessing INFO [Model metadata saved to] modelos_novos/best_model_Dataset-CBIO_seed42_metadata.json
+MainProcess| 2025-11-21 17:14:03,587,587 multiprocessing INFO [Dataset-CBIO NSDT 42][Test Run completed successfully] MSE TEST LOSS 0.1503
+MainProcess| 2025-11-21 17:14:03,588,588 multiprocessing INFO [Exp evaluation complete] {'method_name': 'NSDT', 'env_name': 'Dataset-CBIO', 'episode_elapsed_time': 236.90165499999785, 'episode_elapsed_time_per_episode': 236.90165529099977, 'test_mse': 0.1502605378627777, 'trajectories': 1, 'method': 'NSDT', 'seed': 42, 'seconds_taken': 236.9240536670004, 'experiment': 'MAIN_TABLE', 'errored': False}
+MainProcess| 2025-11-21 17:14:03,588,588 multiprocessing INFO Time taken for all runs: 236.9262539170013s	| 3.9487708986166883 minutes
+MainProcess| 2025-11-21 17:14:03,588,588 multiprocessing INFO [Log found at] logs/run-20251121-171006_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-11-21 17:14:03,612,612 multiprocessing INFO Tables: (       env_name method episode_elapsed_time     episode_elapsed_time_per_episode  ... trajectories  seed     seconds_taken    
+                                       mean  ci                             mean  ...           ci  mean  ci          mean  ci
+0  Dataset-CBIO   NSDT           236.901655 NaN                       236.901655  ...          NaN  42.0 NaN    236.924054 NaN
+
+[1 rows x 14 columns], '\\begin{tabular}{@{}lc}\n\\toprule\n&  Dataset-CBIO\\\\\nPolicy $\\mathcal{R}$ \\\\\n\\midrule\nNSDT&0.15$\\pm$nan\\\\\n\\bottomrule\n\\end{tabular}')
+MainProcess| 2025-11-21 17:14:03,612,612 multiprocessing INFO Run over. Fin.
+MainProcess| 2025-11-21 17:14:03,612,612 multiprocessing INFO [Log found at] logs/run-20251121-171006_NSDT_Dataset-CBIO_42_1-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-11-21 17:14:03,613,613 multiprocessing INFO process shutting down

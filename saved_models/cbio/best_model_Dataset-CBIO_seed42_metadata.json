@@ -1,0 +1,15 @@
+{
+  "env_name": "Dataset-CBIO",
+  "seed": 42,
+  "test_loss": 0.15255285799503326,
+  "val_loss": 0.2650368809700012,
+  "train_loss": 0.1924874186515808,
+  "optimized_parameters": {},
+  "model_description": "Hybrid design with shared encoder and specific heads for msi_score and tmb_nonsynonymous, respecting the causal graph.",
+  "code_path": "saved_models/cbio/best_model_Dataset-CBIO_seed42.py",
+  "loss_per_dim": {
+    "msi_score": 0.3220856487751007,
+    "tmb_nonsynonymous": 0.2079881727695465,
+    "tumor_size": 0.0
+  }
+}

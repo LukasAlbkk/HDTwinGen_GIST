@@ -1,0 +1,16 @@
+{
+  "env_name": "Dataset-CBIO",
+  "seed": 44,
+  "test_loss": 28.295087814331055,
+  "val_loss": 31.80447006225586,
+  "train_loss": 41.137725830078125,
+  "optimized_parameters": {},
+  "model_description": "This is a black box model that incorporates patient-specific characteristics and treatment duration to predict tumor dynamics, with increased complexity and regularization.",
+  "code_path": "saved_models/cbio/best_model_Dataset-CBIO_seed44.py",
+  "loss_per_dim": {
+    "tumor_size": 10.279727935791016,
+    "msi_score": 0.5246796607971191,
+    "tmb_nonsynonymous": 0.0364883616566658,
+    "mitotic_rate": 116.37698364257812
+  }
+}

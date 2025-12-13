@@ -1,0 +1,2 @@
+- setup.use_azure_api=true
+- run.model=gpt4o-mini-202409

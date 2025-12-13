@@ -1,0 +1,1382 @@
+MainProcess| 2025-10-18 13:40:22,416,416 multiprocessing INFO Starting run 	 | See log at : logs/run-20251018-134022_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-18 13:40:22,416,416 multiprocessing INFO [Main Config] {'run': {'samples': 20, 'max_episodes': 1, 'log_path': 'logs/run-20251018-134022_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4o-mini', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 5, 'reflection_history': 3, 'sub_group_resample': 2, 'generations': 5, 'nsdt_patience': 15, 'optimize_params': True, 'optimization': {'patience': 30, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1, 'learning_rate': 0.005, 'weight_decay': 0.0001, 'epochs': 400, 'log_interval': 40}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/cbio'}, 'setup': {'trajectories_sweep': [1000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'HDTwinGen_CBIO', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 42, 'seed_runs': 2, 'enable_tests': False, 'cuda': False, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-18 13:40:22,416,416 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 20)
+MainProcess| 2025-10-18 13:40:22,418,418 multiprocessing INFO Running Dataset-CBIO NSDT 42
+MainProcess| 2025-10-18 13:40:22,439,439 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 42 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-18 13:40:22,464,464 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-10-18 13:40:22,464,464 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Multi-Feature Treatment Response Model for GIST (CBIO Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model that outputs 4 derivatives for the 4 STATE variables, using 7 STATIC features for personalization and 1 CONTROL input (treatment_duration). Code must ONLY fill the provided class skeleton.
+
+INPUTS (order is FIXED; each is a [B,1] tensor):
+1. tumor_size (STATE)               [1.0–30.0] cm
+2. msi_score (STATE)                [0.0–10.0]
+3. tmb_nonsynonymous (STATE)        [0.0–3.0]
+4. mitotic_rate (STATE)             [0.0–100.0]
+5. age_at_diagnosis (STATIC)        [20–90] years
+6. stage_encoded (STATIC)           {0=Localized,1=Metastatic}
+7. treatment_encoded (STATIC)       {0=IMATINIB,1=SUNITINIB,2=REGORAFENIB,3=TRIAL,4=OTHER}
+8. has_kit_mutation (STATIC)        {0/1}
+9. tumor_purity (STATIC)            [0–100] %
+10. site_small_intestine (STATIC)   {0/1}
+11. site_stomach (STATIC)           {0/1}
+12. treatment_duration (CONTROL)    [0–2000] days (cumulative)
+
+OUTPUT (order is FIXED; each [B,1]):
+return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+
+HARD CONSTRAINTS (must implement):
+1) DO NOT use BatchNorm. If normalizing hidden reps, use LayerNorm.
+2) Treatment MUST matter and be **monotone suppressive** for tumor_size:
+   Implement a non-negative gate γ(x) = Softplus(MLP(all 12 inputs)) and apply:
+   d_tumor_size__dt = d_tumor_size__dt - γ * treatment_duration
+   This ensures higher treatment_duration makes growth less positive (or more negative).
+3) Stability: clamp derivatives to plausible ranges, e.g.:
+   d_tumor_size__dt ∈ [-5, 5], d_msi_score__dt ∈ [-1, 1], d_tmb_nonsynonymous__dt ∈ [-0.05, 0.05], d_mitotic_rate__dt ∈ [-10, 10].
+4) Activation & regularization: use LeakyReLU (or ELU), Dropout in [0.1,0.3]. Avoid exploding weights.
+5) Personalization: allow STATIC features to modulate the dynamics (e.g., via learned gates/embeddings or by concatenation into the MLP).
+6) Assertions: inside forward, assert concatenated input has last-dim = 12. Never return NaN/Inf.
+
+RECOMMENDED BLUEPRINT (simple and effective):
+- Concatenate ALL 12 inputs into x (dim=-1).
+- MLP block: Linear(12→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→64) → LeakyReLU → Linear(64→4).
+- Split outputs into (d_tumor, d_msi, d_tmb, d_mitotic).
+- Monotone treatment gate: γ = Softplus(Linear(12→64)→LeakyReLU→Linear(64→1)).
+- Apply d_tumor ← d_tumor - γ * treatment_duration.
+- Clamp all four derivatives to the given ranges.
+- Return them in the exact required order.
+
+MEDICAL PRIOR (lightweight; do NOT overconstrain):
+- Tumor growth tends to slow as mass increases (implicit via MLP + clamp).
+- Longer effective treatment typically reduces net growth → enforced by the monotone gate.
+- MSI/TMB/mitotic_rate change slowly vs tumor_size; keep derivative magnitudes small (use clamps).
+
+EVALUATION GUARD (implement as inline sanity checks / comments):
+- For a random batch, compute outputs twice: with treatment_duration=0 vs +1000. Ensure d_tumor_size__dt with +1000 is <= the value with 0 (monotone).
+- Ensure shapes: all inputs [B,1], concatenation → last-dim=12, outputs split in 4×[B,1].
+
+VARIABLE DESCRIPTIONS (for context):
+STATE VARIABLES (require derivatives):
+* tumor_size: Primary outcome measure, cm (longest diameter)
+* msi_score: Microsatellite instability (genomic biomarker)
+* tmb_nonsynonymous: Tumor mutational burden (mutation count)
+* mitotic_rate: Proliferation rate (mitoses per 50 HPF)
+
+STATIC FEATURES (NO derivatives - patient characteristics):
+* age_at_diagnosis: Patient age in years
+* stage_encoded: 0=Localized, 1=Metastatic
+* treatment_encoded: 0=IMATINIB (1st line), 1=SUNITINIB (2nd line), 2=REGORAFENIB (3rd line), 3=TRIAL, 4=OTHER
+* has_kit_mutation: 0=No, 1=Yes (KIT+ tumors respond better to IMATINIB)
+* tumor_purity: Percentage of tumor cells (affects biomarker reliability)
+* site_small_intestine: 1=Small Intestine, 0=Other
+* site_stomach: 1=Stomach, 0=Other
+
+CONTROL INPUT:
+* treatment_duration: Cumulative days of treatment (MUST suppress tumor growth monotonically)
+
+MainProcess| 2025-10-18 13:40:22,464,464 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 21.19% | Tokens remaining 6456]
+MainProcess| 2025-10-18 13:40:32,331,331 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-18 13:40:32,333,333 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom typing import Tuple\n\nclass StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\tself.mlp = nn.Sequential(\n\t\t\tnn.Linear(12, 256),\n\t\t\tnn.LayerNorm(256),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Dropout(0.2),\n\t\t\tnn.Linear(256, 256),\n\t\t\tnn.LayerNorm(256),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Dropout(0.2),\n\t\t\tnn.Linear(256, 64),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Linear(64, 4)\n\t\t)\n\t\tself.treatment_gate = nn.Sequential(\n\t\t\tnn.Linear(12, 64),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\n\tdef forward(self, inputs: Tuple[torch.Tensor]) -> Tuple[torch.Tensor]:\n\t\t# Concatenate inputs\n\t\tx = torch.cat(inputs, dim=-1)\n\t\tassert x.shape[-1] == 12, \"Input must have last dimension of size 12\"\n\n\t\t# Compute derivatives\n\t\tderivatives = self.mlp(x)\n\t\td_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = derivatives.split(1, dim=-1)\n\n\t\t# Compute treatment gate\n\t\tgamma = F.softplus(self.treatment_gate(x))\n\n\t\t# Apply treatment effect on tumor size\n\t\td_tumor_size__dt = d_tumor_size__dt - gamma * inputs[11]  # treatment_duration\n\n\t\t# Clamp outputs to physiological ranges\n\t\td_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)\n\t\td_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)\n\n\t\t# Sanity checks\n\t\tassert not torch.isnan(d_tumor_size__dt).any(), \"Output contains NaN\"\n\t\tassert not torch.isinf(d_tumor_size__dt).any(), \"Output contains Inf\"\n\n\t\treturn d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt","code_description":"This code implements a neural ODE-like differential model for simulating treatment response in GIST, using a hybrid design of mechanistic prior and residual MLP correction."}
+MainProcess| 2025-10-18 13:40:33,016,16 multiprocessing ERROR [Error] StateDifferential.forward() takes 2 positional arguments but 13 were given
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 382, in _run
+    function_return_message, code_dict, has_success = process_function_call_and_return_message(response_message["function_call"], self.simulator_code_dict, env=self.env, functions=self.functions, config=self.config, logger=self.logger)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 114, in process_function_call_and_return_message
+    function_response, simulator_code_dict, has_success = function_to_call(**function_args)
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 25, in complete_StateDifferential_code
+    train_loss, val_loss, optimized_parameters, loss_per_dim_dict, test_loss = env.evaluate_simulator_code(StateDifferential=user_code_module.StateDifferential, config=config, logger=logger)
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/envs.py", line 163, in evaluate_simulator_code
+    return gt_env.evaluate_simulator_code_wrapper(StateDifferential=StateDifferential, train_data=self.train_data, val_data=self.val_data, test_data=self.test_data, config=config, logger=logger, env_name=self.env_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 123, in evaluate_simulator_code_wrapper
+    train_loss, val_loss, optimized_parameters, loss_per_dim, test_loss = self.evaluate_simulator_code_using_pytorch(StateDifferential, train_data, val_data, test_data, config=config, logger=logger, env_name=env_name)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 284, in evaluate_simulator_code_using_pytorch
+    cum_loss += train_opt(f_model, states_train_batch, actions_train_batch, static_train_batch)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 197, in train
+    dx_dt = model(tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1773, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1784, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: StateDifferential.forward() takes 2 positional arguments but 13 were given
+MainProcess| 2025-10-18 13:40:33,022,22 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 20)	| error=StateDifferential.forward() takes 2 positional arguments but 13 were given
+MainProcess| 2025-10-18 13:40:33,022,22 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 42, 'method_name': 'NSDT'}
+MainProcess| 2025-10-18 13:40:33,022,22 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 43, 20)
+MainProcess| 2025-10-18 13:40:33,025,25 multiprocessing INFO Running Dataset-CBIO NSDT 43
+MainProcess| 2025-10-18 13:40:33,034,34 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 43 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-18 13:40:33,035,35 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-10-18 13:40:33,035,35 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Multi-Feature Treatment Response Model for GIST (CBIO Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model that outputs 4 derivatives for the 4 STATE variables, using 7 STATIC features for personalization and 1 CONTROL input (treatment_duration). Code must ONLY fill the provided class skeleton.
+
+INPUTS (order is FIXED; each is a [B,1] tensor):
+1. tumor_size (STATE)               [1.0–30.0] cm
+2. msi_score (STATE)                [0.0–10.0]
+3. tmb_nonsynonymous (STATE)        [0.0–3.0]
+4. mitotic_rate (STATE)             [0.0–100.0]
+5. age_at_diagnosis (STATIC)        [20–90] years
+6. stage_encoded (STATIC)           {0=Localized,1=Metastatic}
+7. treatment_encoded (STATIC)       {0=IMATINIB,1=SUNITINIB,2=REGORAFENIB,3=TRIAL,4=OTHER}
+8. has_kit_mutation (STATIC)        {0/1}
+9. tumor_purity (STATIC)            [0–100] %
+10. site_small_intestine (STATIC)   {0/1}
+11. site_stomach (STATIC)           {0/1}
+12. treatment_duration (CONTROL)    [0–2000] days (cumulative)
+
+OUTPUT (order is FIXED; each [B,1]):
+return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+
+HARD CONSTRAINTS (must implement):
+1) DO NOT use BatchNorm. If normalizing hidden reps, use LayerNorm.
+2) Treatment MUST matter and be **monotone suppressive** for tumor_size:
+   Implement a non-negative gate γ(x) = Softplus(MLP(all 12 inputs)) and apply:
+   d_tumor_size__dt = d_tumor_size__dt - γ * treatment_duration
+   This ensures higher treatment_duration makes growth less positive (or more negative).
+3) Stability: clamp derivatives to plausible ranges, e.g.:
+   d_tumor_size__dt ∈ [-5, 5], d_msi_score__dt ∈ [-1, 1], d_tmb_nonsynonymous__dt ∈ [-0.05, 0.05], d_mitotic_rate__dt ∈ [-10, 10].
+4) Activation & regularization: use LeakyReLU (or ELU), Dropout in [0.1,0.3]. Avoid exploding weights.
+5) Personalization: allow STATIC features to modulate the dynamics (e.g., via learned gates/embeddings or by concatenation into the MLP).
+6) Assertions: inside forward, assert concatenated input has last-dim = 12. Never return NaN/Inf.
+
+RECOMMENDED BLUEPRINT (simple and effective):
+- Concatenate ALL 12 inputs into x (dim=-1).
+- MLP block: Linear(12→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→64) → LeakyReLU → Linear(64→4).
+- Split outputs into (d_tumor, d_msi, d_tmb, d_mitotic).
+- Monotone treatment gate: γ = Softplus(Linear(12→64)→LeakyReLU→Linear(64→1)).
+- Apply d_tumor ← d_tumor - γ * treatment_duration.
+- Clamp all four derivatives to the given ranges.
+- Return them in the exact required order.
+
+MEDICAL PRIOR (lightweight; do NOT overconstrain):
+- Tumor growth tends to slow as mass increases (implicit via MLP + clamp).
+- Longer effective treatment typically reduces net growth → enforced by the monotone gate.
+- MSI/TMB/mitotic_rate change slowly vs tumor_size; keep derivative magnitudes small (use clamps).
+
+EVALUATION GUARD (implement as inline sanity checks / comments):
+- For a random batch, compute outputs twice: with treatment_duration=0 vs +1000. Ensure d_tumor_size__dt with +1000 is <= the value with 0 (monotone).
+- Ensure shapes: all inputs [B,1], concatenation → last-dim=12, outputs split in 4×[B,1].
+
+VARIABLE DESCRIPTIONS (for context):
+STATE VARIABLES (require derivatives):
+* tumor_size: Primary outcome measure, cm (longest diameter)
+* msi_score: Microsatellite instability (genomic biomarker)
+* tmb_nonsynonymous: Tumor mutational burden (mutation count)
+* mitotic_rate: Proliferation rate (mitoses per 50 HPF)
+
+STATIC FEATURES (NO derivatives - patient characteristics):
+* age_at_diagnosis: Patient age in years
+* stage_encoded: 0=Localized, 1=Metastatic
+* treatment_encoded: 0=IMATINIB (1st line), 1=SUNITINIB (2nd line), 2=REGORAFENIB (3rd line), 3=TRIAL, 4=OTHER
+* has_kit_mutation: 0=No, 1=Yes (KIT+ tumors respond better to IMATINIB)
+* tumor_purity: Percentage of tumor cells (affects biomarker reliability)
+* site_small_intestine: 1=Small Intestine, 0=Other
+* site_stomach: 1=Stomach, 0=Other
+
+CONTROL INPUT:
+* treatment_duration: Cumulative days of treatment (MUST suppress tumor growth monotonically)
+
+MainProcess| 2025-10-18 13:40:33,035,35 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 21.19% | Tokens remaining 6456]
+MainProcess| 2025-10-18 13:40:45,532,532 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-18 13:40:45,532,532 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom typing import Tuple\n\nclass StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\tself.mlp = nn.Sequential(\n\t\t\tnn.Linear(12, 256),\n\t\t\tnn.LayerNorm(256),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Dropout(0.2),\n\t\t\tnn.Linear(256, 256),\n\t\t\tnn.LayerNorm(256),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Dropout(0.2),\n\t\t\tnn.Linear(256, 64),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Linear(64, 4)\n\t\t)\n\t\tself.treatment_gate = nn.Sequential(\n\t\t\tnn.Linear(12, 64),\n\t\t\tnn.LeakyReLU(0.1),\n\t\t\tnn.Linear(64, 1)\n\t\t)\n\n\tdef forward(self, tumor_size: torch.Tensor, msi_score: torch.Tensor, tmb_nonsynonymous: torch.Tensor, mitotic_rate: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor, stage_encoded: torch.Tensor, treatment_encoded: torch.Tensor,\n\t\t\thas_kit_mutation: torch.Tensor, tumor_purity: torch.Tensor, site_small_intestine: torch.Tensor,\n\t\t\tsite_stomach: torch.Tensor, treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n\t\t# Concatenate inputs\n\t\tx = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,\n\t\t\tage_at_diagnosis, stage_encoded, treatment_encoded,\n\t\t\thas_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)\n\t\tassert x.shape[-1] == 12, \"Input must have last dimension of size 12\"\n\n\t\t# Compute derivatives\n\t\tdynamics = self.mlp(x)\n\t\td_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)\n\n\t\t# Compute treatment gate\n\t\tgamma = F.softplus(self.treatment_gate(x))\n\n\t\t# Apply treatment effect\n\t\td_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration\n\n\t\t# Clamp outputs to physiological ranges\n\t\td_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)\n\t\td_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)\n\n\t\t# Sanity checks\n\t\tassert not torch.any(torch.isnan(dynamics)), \"Output contains NaN\"\n\t\tassert not torch.any(torch.isinf(dynamics)), \"Output contains Inf\"\n\n\t\treturn d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt","code_description":"This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction."}
+MainProcess| 2025-10-18 13:41:59,796,796 multiprocessing INFO [NSDT | Dataset-CBIO | 43][Generation 0] | Top Fitness: 31.30970001220703 | Num Programs: 1 | Mean Fitness: 31.30970001220703 | Fitnesses: [31.30970001220703] | Current Gen Val Loss: 31.30970001220703
+MainProcess| 2025-10-18 13:41:59,796,796 multiprocessing INFO [NSDT | Dataset-CBIO | 43][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 43, 'generation': 0, 'top_fitness': 31.30970001220703, 'num_programs': 1, 'mean_fitness': np.float64(31.30970001220703), 'fitnesses': [31.30970001220703], 'current_gen_val_loss': 31.30970001220703}
+MainProcess| 2025-10-18 13:42:09,301,301 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-10-18 13:42:09,301,301 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Multi-Feature Treatment Response Model for GIST (CBIO Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model that outputs 4 derivatives for the 4 STATE variables, using 7 STATIC features for personalization and 1 CONTROL input (treatment_duration). Code must ONLY fill the provided class skeleton.
+
+INPUTS (order is FIXED; each is a [B,1] tensor):
+1. tumor_size (STATE)               [1.0–30.0] cm
+2. msi_score (STATE)                [0.0–10.0]
+3. tmb_nonsynonymous (STATE)        [0.0–3.0]
+4. mitotic_rate (STATE)             [0.0–100.0]
+5. age_at_diagnosis (STATIC)        [20–90] years
+6. stage_encoded (STATIC)           {0=Localized,1=Metastatic}
+7. treatment_encoded (STATIC)       {0=IMATINIB,1=SUNITINIB,2=REGORAFENIB,3=TRIAL,4=OTHER}
+8. has_kit_mutation (STATIC)        {0/1}
+9. tumor_purity (STATIC)            [0–100] %
+10. site_small_intestine (STATIC)   {0/1}
+11. site_stomach (STATIC)           {0/1}
+12. treatment_duration (CONTROL)    [0–2000] days (cumulative)
+
+OUTPUT (order is FIXED; each [B,1]):
+return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+
+HARD CONSTRAINTS (must implement):
+1) DO NOT use BatchNorm. If normalizing hidden reps, use LayerNorm.
+2) Treatment MUST matter and be **monotone suppressive** for tumor_size:
+   Implement a non-negative gate γ(x) = Softplus(MLP(all 12 inputs)) and apply:
+   d_tumor_size__dt = d_tumor_size__dt - γ * treatment_duration
+   This ensures higher treatment_duration makes growth less positive (or more negative).
+3) Stability: clamp derivatives to plausible ranges, e.g.:
+   d_tumor_size__dt ∈ [-5, 5], d_msi_score__dt ∈ [-1, 1], d_tmb_nonsynonymous__dt ∈ [-0.05, 0.05], d_mitotic_rate__dt ∈ [-10, 10].
+4) Activation & regularization: use LeakyReLU (or ELU), Dropout in [0.1,0.3]. Avoid exploding weights.
+5) Personalization: allow STATIC features to modulate the dynamics (e.g., via learned gates/embeddings or by concatenation into the MLP).
+6) Assertions: inside forward, assert concatenated input has last-dim = 12. Never return NaN/Inf.
+
+RECOMMENDED BLUEPRINT (simple and effective):
+- Concatenate ALL 12 inputs into x (dim=-1).
+- MLP block: Linear(12→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→64) → LeakyReLU → Linear(64→4).
+- Split outputs into (d_tumor, d_msi, d_tmb, d_mitotic).
+- Monotone treatment gate: γ = Softplus(Linear(12→64)→LeakyReLU→Linear(64→1)).
+- Apply d_tumor ← d_tumor - γ * treatment_duration.
+- Clamp all four derivatives to the given ranges.
+- Return them in the exact required order.
+
+MEDICAL PRIOR (lightweight; do NOT overconstrain):
+- Tumor growth tends to slow as mass increases (implicit via MLP + clamp).
+- Longer effective treatment typically reduces net growth → enforced by the monotone gate.
+- MSI/TMB/mitotic_rate change slowly vs tumor_size; keep derivative magnitudes small (use clamps).
+
+EVALUATION GUARD (implement as inline sanity checks / comments):
+- For a random batch, compute outputs twice: with treatment_duration=0 vs +1000. Ensure d_tumor_size__dt with +1000 is <= the value with 0 (monotone).
+- Ensure shapes: all inputs [B,1], concatenation → last-dim=12, outputs split in 4×[B,1].
+
+VARIABLE DESCRIPTIONS (for context):
+STATE VARIABLES (require derivatives):
+* tumor_size: Primary outcome measure, cm (longest diameter)
+* msi_score: Microsatellite instability (genomic biomarker)
+* tmb_nonsynonymous: Tumor mutational burden (mutation count)
+* mitotic_rate: Proliferation rate (mitoses per 50 HPF)
+
+STATIC FEATURES (NO derivatives - patient characteristics):
+* age_at_diagnosis: Patient age in years
+* stage_encoded: 0=Localized, 1=Metastatic
+* treatment_encoded: 0=IMATINIB (1st line), 1=SUNITINIB (2nd line), 2=REGORAFENIB (3rd line), 3=TRIAL, 4=OTHER
+* has_kit_mutation: 0=No, 1=Yes (KIT+ tumors respond better to IMATINIB)
+* tumor_purity: Percentage of tumor cells (affects biomarker reliability)
+* site_small_intestine: 1=Small Intestine, 0=Other
+* site_stomach: 1=Stomach, 0=Other
+
+CONTROL INPUT:
+* treatment_duration: Cumulative days of treatment (MUST suppress tumor growth monotonically)
+
+MainProcess| 2025-10-18 13:42:09,302,302 multiprocessing INFO [User] 
+You generated the following code completions, which then had their parameters optimized to the training dataset. Please reflect on how you can improve the code to minimize the validation loss to 1e-6 or less. The code examples are delineated by ###.
+
+Here are your previous iterations the best programs generated. Use it to see if you have exhausted white box models, i.e. when a white box model repeats with the same val loss and then only add black box models to the white box models:```
+Iteration 0. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+```
+
+Here are the top code completions so far that you have generated, sorted for the lowest validation loss last:```
+
+Val Loss: 31.3 (Where the val loss per dimension is tumor_size val loss: 10.5, msi_score val loss: 0.513, tmb_nonsynonymous val loss: 0.00257) Iteration: 0
+###
+```
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from typing import Tuple
+
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		self.mlp = nn.Sequential(
+			nn.Linear(12, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 4)
+		)
+		self.treatment_gate = nn.Sequential(
+			nn.Linear(12, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 1)
+		)
+
+	def forward(self, tumor_size: torch.Tensor, msi_score: torch.Tensor, tmb_nonsynonymous: torch.Tensor, mitotic_rate: torch.Tensor,
+			age_at_diagnosis: torch.Tensor, stage_encoded: torch.Tensor, treatment_encoded: torch.Tensor,
+			has_kit_mutation: torch.Tensor, tumor_purity: torch.Tensor, site_small_intestine: torch.Tensor,
+			site_stomach: torch.Tensor, treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+		# Concatenate inputs
+		x = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+			age_at_diagnosis, stage_encoded, treatment_encoded,
+			has_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)
+		assert x.shape[-1] == 12, "Input must have last dimension of size 12"
+
+		# Compute derivatives
+		dynamics = self.mlp(x)
+		d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)
+
+		# Compute treatment gate
+		gamma = F.softplus(self.treatment_gate(x))
+
+		# Apply treatment effect
+		d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+
+		# Clamp outputs to physiological ranges
+		d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+		d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)
+
+		# Sanity checks
+		assert not torch.any(torch.isnan(dynamics)), "Output contains NaN"
+		assert not torch.any(torch.isinf(dynamics)), "Output contains Inf"
+
+		return d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt
+```
+optimized_parameters = {}
+###
+
+
+```
+
+Please reflect on how you can improve the code to fit the dataset as accurately as possible, and be interpretable. Think step-by-step. Provide only actionable feedback, that has direct changes to the code. Do not write out the code, only describe how it can be improved. Where applicable use the values of the optimized parameters to reason how the code can be improved to fit the dataset as accurately as possible. This is for generating new code for the next iteration 1 out of 5.
+
+MainProcess| 2025-10-18 13:42:09,303,303 multiprocessing INFO [Assistant] To improve the model and minimize the validation loss to 1e-6 or less, consider the following actionable feedback:
+
+1. **Increase Model Capacity**: The current architecture has a maximum of 256 hidden units in the MLP. Experiment with increasing the number of units in the hidden layers or adding an additional layer to allow the model to capture more complex relationships in the data.
+
+2. **Adjust Activation Functions**: While LeakyReLU is a good choice, consider experimenting with ELU or Swish activations, which can sometimes provide better performance by allowing for smoother gradients and avoiding dead neurons.
+
+3. **Refine Dropout Rates**: The current dropout rate of 0.2 may be too high or too low. Experiment with different dropout rates (e.g., 0.1, 0.3) to find a balance that prevents overfitting while still allowing the model to learn effectively.
+
+4. **Modify Treatment Gate**: The treatment gate currently uses a simple linear layer followed by LeakyReLU. Consider adding a non-linear activation function after the first linear layer to allow for more complex interactions before applying the Softplus function.
+
+5. **Feature Engineering**: Investigate the importance of each static feature. If certain features are less relevant, consider removing them or combining them into a single feature to reduce dimensionality and improve model interpretability.
+
+6. **Regularization Techniques**: In addition to dropout, consider adding L2 regularization (weight decay) to the optimizer to prevent overfitting and stabilize training.
+
+7. **Learning Rate Scheduling**: Implement a learning rate scheduler to adjust the learning rate during training. This can help the model converge more effectively and avoid getting stuck in local minima.
+
+8. **Batch Size Considerations**: Although the model is designed to work with batch size = 1, consider testing with larger batch sizes if possible, as this can provide more stable gradient estimates and improve convergence.
+
+9. **Output Clamping**: Ensure that the clamping ranges for the derivatives are appropriate based on the dataset. If the data suggests different plausible ranges, adjust the clamping values accordingly.
+
+10. **Sanity Checks**: Enhance the sanity checks to include checks for gradient norms or other metrics that can help identify issues during training, such as exploding gradients.
+
+By implementing these changes, the model can potentially capture the underlying dynamics of the treatment response more effectively, leading to a lower validation loss.
+MainProcess| 2025-10-18 13:42:09,303,303 multiprocessing INFO [User] 
+Please now regenerate the code function, with the aim to improve the code to achieve a lower validation error. Use the feedback where applicable. You are generating code for iteration 1 out of 5 total iterations. When generating code if you are unsure about something, take your best guess. You have to generate code, and cannot give an empty string answer.
+
+Please always only fill in the following code skeleton:```
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    # BLUEPRINT RECOMMENDATION:
+    # Main MLP: Linear(12→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→64) → LeakyReLU → Linear(64→4)
+    # Treatment gate: Linear(12→64) → LeakyReLU → Linear(64→1) → Softplus
+    # Example:
+    # self.fc1 = nn.Linear(12, 256)
+    # self.ln1 = nn.LayerNorm(256)  # NOT BatchNorm!
+    # self.fc2 = nn.Linear(256, 256)
+    # self.ln2 = nn.LayerNorm(256)
+    # self.fc3 = nn.Linear(256, 64)
+    # self.fc4 = nn.Linear(64, 4)
+    # self.dropout = nn.Dropout(0.2)
+    # self.gate_fc1 = nn.Linear(12, 64)
+    # self.gate_fc2 = nn.Linear(64, 1)
+
+  def forward(self,
+              tumor_size: torch.Tensor,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              treatment_encoded: torch.Tensor,
+              has_kit_mutation: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              site_small_intestine: torch.Tensor,
+              site_stomach: torch.Tensor,
+              treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # REQUIRED STEPS:
+    # 1. Concatenate ALL 12 inputs:
+    #    x = torch.cat([tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+    #                   age_at_diagnosis, stage_encoded, treatment_encoded,
+    #                   has_kit_mutation, tumor_purity,
+    #                   site_small_intestine, site_stomach,
+    #                   treatment_duration], dim=-1)
+    #    assert x.shape[-1] == 12, f"Expected 12 inputs, got {x.shape[-1]}"
+    #
+    # 2. Pass through MLP to get 4 raw derivatives
+    #
+    # 3. Compute monotone treatment gate:
+    #    gamma = F.softplus(gate_network(x))  # Always >= 0
+    #
+    # 4. Apply suppressive effect to tumor derivative:
+    #    d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+    #
+    # 5. Clamp all derivatives to plausible ranges:
+    #    d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)
+    #    d_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)
+    #    d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+    #    d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)
+    #
+    # 6. Return EXACTLY 4 derivatives in order:
+    return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+```
+You cannot change the code skeleton, or input variables.
+
+MainProcess| 2025-10-18 13:42:09,303,303 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 51.20% | Tokens remaining 3998]
+MainProcess| 2025-10-18 13:42:27,329,329 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-18 13:42:27,329,329 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"class StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\tself.fc1 = nn.Linear(12, 256)\n\t\tself.ln1 = nn.LayerNorm(256)\n\t\tself.fc2 = nn.Linear(256, 256)\n\t\tself.ln2 = nn.LayerNorm(256)\n\t\tself.fc3 = nn.Linear(256, 64)\n\t\tself.fc4 = nn.Linear(64, 4)\n\t\tself.dropout = nn.Dropout(0.2)\n\t\tself.gate_fc1 = nn.Linear(12, 64)\n\t\tself.gate_ln = nn.LayerNorm(64)\n\t\tself.gate_fc2 = nn.Linear(64, 1)\n\n\tdef forward(self,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\ttreatment_encoded: torch.Tensor,\n\t\t\thas_kit_mutation: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tsite_small_intestine: torch.Tensor,\n\t\t\tsite_stomach: torch.Tensor,\n\t\t\ttreatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n\t\t# Concatenate inputs\n\t\tx = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,\n\t\t\t\tage_at_diagnosis, stage_encoded, treatment_encoded,\n\t\t\t\thas_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)\n\t\tassert x.shape[-1] == 12, \"Input must have last dimension of size 12\"\n\n\t\t# Compute derivatives\n\t\tdynamics = self.fc4(self.dropout(F.leaky_relu(self.ln3(self.fc3(self.dropout(F.leaky_relu(self.ln2(self.fc2(self.dropout(F.leaky_relu(self.ln1(self.fc1(x)))))))))))))\n\t\td_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)\n\n\t\t# Compute treatment gate\n\t\tgamma = F.softplus(self.gate_fc2(self.gate_ln(F.leaky_relu(self.gate_fc1(x)))))\n\n\t\t# Apply treatment effect\n\t\td_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration\n\n\t\t# Clamp outputs to physiological ranges\n\t\td_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)\n\t\td_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)\n\n\t\t# Sanity checks\n\t\tassert not torch.any(torch.isnan(dynamics)), \"Output contains NaN\"\n\t\tassert not torch.any(torch.isinf(dynamics)), \"Output contains Inf\"\n\n\t\treturn d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt","code_description":"This code implements an improved neural ODE-like differential model for simulating treatment responses in GIST, incorporating feedback for better performance."}
+MainProcess| 2025-10-18 13:42:27,337,337 multiprocessing INFO [Invalid code, attempting to fix the code] 'StateDifferential' object has no attribute 'ln3'
+MainProcess| 2025-10-18 13:42:27,337,337 multiprocessing INFO [NSDT | Dataset-CBIO | 43][Generation 1] | Top Fitness: 31.30970001220703 | Num Programs: 1 | Mean Fitness: 31.30970001220703 | Fitnesses: [31.30970001220703] | Current Gen Val Loss: 31.30970001220703
+MainProcess| 2025-10-18 13:42:27,337,337 multiprocessing INFO [NSDT | Dataset-CBIO | 43][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 43, 'generation': 1, 'top_fitness': 31.30970001220703, 'num_programs': 1, 'mean_fitness': np.float64(31.30970001220703), 'fitnesses': [31.30970001220703], 'current_gen_val_loss': 31.30970001220703}
+MainProcess| 2025-10-18 13:42:36,538,538 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-10-18 13:42:36,538,538 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Multi-Feature Treatment Response Model for GIST (CBIO Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model that outputs 4 derivatives for the 4 STATE variables, using 7 STATIC features for personalization and 1 CONTROL input (treatment_duration). Code must ONLY fill the provided class skeleton.
+
+INPUTS (order is FIXED; each is a [B,1] tensor):
+1. tumor_size (STATE)               [1.0–30.0] cm
+2. msi_score (STATE)                [0.0–10.0]
+3. tmb_nonsynonymous (STATE)        [0.0–3.0]
+4. mitotic_rate (STATE)             [0.0–100.0]
+5. age_at_diagnosis (STATIC)        [20–90] years
+6. stage_encoded (STATIC)           {0=Localized,1=Metastatic}
+7. treatment_encoded (STATIC)       {0=IMATINIB,1=SUNITINIB,2=REGORAFENIB,3=TRIAL,4=OTHER}
+8. has_kit_mutation (STATIC)        {0/1}
+9. tumor_purity (STATIC)            [0–100] %
+10. site_small_intestine (STATIC)   {0/1}
+11. site_stomach (STATIC)           {0/1}
+12. treatment_duration (CONTROL)    [0–2000] days (cumulative)
+
+OUTPUT (order is FIXED; each [B,1]):
+return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+
+HARD CONSTRAINTS (must implement):
+1) DO NOT use BatchNorm. If normalizing hidden reps, use LayerNorm.
+2) Treatment MUST matter and be **monotone suppressive** for tumor_size:
+   Implement a non-negative gate γ(x) = Softplus(MLP(all 12 inputs)) and apply:
+   d_tumor_size__dt = d_tumor_size__dt - γ * treatment_duration
+   This ensures higher treatment_duration makes growth less positive (or more negative).
+3) Stability: clamp derivatives to plausible ranges, e.g.:
+   d_tumor_size__dt ∈ [-5, 5], d_msi_score__dt ∈ [-1, 1], d_tmb_nonsynonymous__dt ∈ [-0.05, 0.05], d_mitotic_rate__dt ∈ [-10, 10].
+4) Activation & regularization: use LeakyReLU (or ELU), Dropout in [0.1,0.3]. Avoid exploding weights.
+5) Personalization: allow STATIC features to modulate the dynamics (e.g., via learned gates/embeddings or by concatenation into the MLP).
+6) Assertions: inside forward, assert concatenated input has last-dim = 12. Never return NaN/Inf.
+
+RECOMMENDED BLUEPRINT (simple and effective):
+- Concatenate ALL 12 inputs into x (dim=-1).
+- MLP block: Linear(12→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→64) → LeakyReLU → Linear(64→4).
+- Split outputs into (d_tumor, d_msi, d_tmb, d_mitotic).
+- Monotone treatment gate: γ = Softplus(Linear(12→64)→LeakyReLU→Linear(64→1)).
+- Apply d_tumor ← d_tumor - γ * treatment_duration.
+- Clamp all four derivatives to the given ranges.
+- Return them in the exact required order.
+
+MEDICAL PRIOR (lightweight; do NOT overconstrain):
+- Tumor growth tends to slow as mass increases (implicit via MLP + clamp).
+- Longer effective treatment typically reduces net growth → enforced by the monotone gate.
+- MSI/TMB/mitotic_rate change slowly vs tumor_size; keep derivative magnitudes small (use clamps).
+
+EVALUATION GUARD (implement as inline sanity checks / comments):
+- For a random batch, compute outputs twice: with treatment_duration=0 vs +1000. Ensure d_tumor_size__dt with +1000 is <= the value with 0 (monotone).
+- Ensure shapes: all inputs [B,1], concatenation → last-dim=12, outputs split in 4×[B,1].
+
+VARIABLE DESCRIPTIONS (for context):
+STATE VARIABLES (require derivatives):
+* tumor_size: Primary outcome measure, cm (longest diameter)
+* msi_score: Microsatellite instability (genomic biomarker)
+* tmb_nonsynonymous: Tumor mutational burden (mutation count)
+* mitotic_rate: Proliferation rate (mitoses per 50 HPF)
+
+STATIC FEATURES (NO derivatives - patient characteristics):
+* age_at_diagnosis: Patient age in years
+* stage_encoded: 0=Localized, 1=Metastatic
+* treatment_encoded: 0=IMATINIB (1st line), 1=SUNITINIB (2nd line), 2=REGORAFENIB (3rd line), 3=TRIAL, 4=OTHER
+* has_kit_mutation: 0=No, 1=Yes (KIT+ tumors respond better to IMATINIB)
+* tumor_purity: Percentage of tumor cells (affects biomarker reliability)
+* site_small_intestine: 1=Small Intestine, 0=Other
+* site_stomach: 1=Stomach, 0=Other
+
+CONTROL INPUT:
+* treatment_duration: Cumulative days of treatment (MUST suppress tumor growth monotonically)
+
+MainProcess| 2025-10-18 13:42:36,538,538 multiprocessing INFO [User] 
+You generated the following code completions, which then had their parameters optimized to the training dataset. Please reflect on how you can improve the code to minimize the validation loss to 1e-6 or less. The code examples are delineated by ###.
+
+Here are your previous iterations the best programs generated. Use it to see if you have exhausted white box models, i.e. when a white box model repeats with the same val loss and then only add black box models to the white box models:```
+Iteration 0. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+Iteration 1. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+```
+
+Here are the top code completions so far that you have generated, sorted for the lowest validation loss last:```
+
+Val Loss: 31.3 (Where the val loss per dimension is tumor_size val loss: 10.5, msi_score val loss: 0.513, tmb_nonsynonymous val loss: 0.00257) Iteration: 0
+###
+```
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from typing import Tuple
+
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		self.mlp = nn.Sequential(
+			nn.Linear(12, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 4)
+		)
+		self.treatment_gate = nn.Sequential(
+			nn.Linear(12, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 1)
+		)
+
+	def forward(self, tumor_size: torch.Tensor, msi_score: torch.Tensor, tmb_nonsynonymous: torch.Tensor, mitotic_rate: torch.Tensor,
+			age_at_diagnosis: torch.Tensor, stage_encoded: torch.Tensor, treatment_encoded: torch.Tensor,
+			has_kit_mutation: torch.Tensor, tumor_purity: torch.Tensor, site_small_intestine: torch.Tensor,
+			site_stomach: torch.Tensor, treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+		# Concatenate inputs
+		x = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+			age_at_diagnosis, stage_encoded, treatment_encoded,
+			has_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)
+		assert x.shape[-1] == 12, "Input must have last dimension of size 12"
+
+		# Compute derivatives
+		dynamics = self.mlp(x)
+		d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)
+
+		# Compute treatment gate
+		gamma = F.softplus(self.treatment_gate(x))
+
+		# Apply treatment effect
+		d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+
+		# Clamp outputs to physiological ranges
+		d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+		d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)
+
+		# Sanity checks
+		assert not torch.any(torch.isnan(dynamics)), "Output contains NaN"
+		assert not torch.any(torch.isinf(dynamics)), "Output contains Inf"
+
+		return d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt
+```
+optimized_parameters = {}
+###
+
+
+```
+
+Please reflect on how you can improve the code to fit the dataset as accurately as possible, and be interpretable. Think step-by-step. Provide only actionable feedback, that has direct changes to the code. Do not write out the code, only describe how it can be improved. Where applicable use the values of the optimized parameters to reason how the code can be improved to fit the dataset as accurately as possible. This is for generating new code for the next iteration 2 out of 5.
+
+MainProcess| 2025-10-18 13:42:36,539,539 multiprocessing INFO [Assistant] To improve the model and minimize the validation loss to 1e-6 or less, consider the following actionable changes:
+
+1. **Increase Model Capacity**: The current architecture has a maximum of 256 hidden units in the MLP. Experiment with increasing the number of units in the hidden layers or adding an additional layer to allow the model to capture more complex relationships in the data.
+
+2. **Adjust Activation Functions**: While LeakyReLU is a good choice, consider using ELU (Exponential Linear Unit) for the hidden layers. ELU can help with faster convergence and better performance by allowing negative values, which can help the model learn more effectively.
+
+3. **Refine Dropout Rates**: The current dropout rate of 0.2 may be too high, especially for a model that is already underfitting. Experiment with lower dropout rates (e.g., 0.1) to retain more information during training while still preventing overfitting.
+
+4. **Modify Treatment Gate**: The treatment gate currently uses a linear layer followed by LeakyReLU. Consider adding a non-linear activation function (like ELU) after the first linear layer in the treatment gate to enhance its expressiveness.
+
+5. **Revisit Clamping Values**: The clamping ranges for the derivatives are currently set based on physiological plausibility. However, if the model is consistently hitting these limits, it may indicate that the model is not learning effectively. Consider adjusting these ranges based on the distribution of the training data or allowing for a slightly wider range to enable more flexibility in learning.
+
+6. **Regularization Techniques**: Introduce L2 regularization (weight decay) in the optimizer to prevent overfitting and help stabilize the training process. This can be particularly useful if the model is complex and has many parameters.
+
+7. **Learning Rate Adjustment**: Experiment with different learning rates or use a learning rate scheduler to adjust the learning rate dynamically during training. A smaller learning rate may help the model converge more effectively.
+
+8. **Batch Size Consideration**: Although the model is designed to work with a batch size of 1, consider testing with larger batch sizes if possible. Larger batches can provide more stable gradient estimates and may help in achieving better convergence.
+
+9. **Feature Engineering**: Investigate the static features to see if any transformations (e.g., normalization, polynomial features) could enhance their contribution to the model. This could help the model better understand the relationships between features and the state variables.
+
+10. **Output Layer Adjustments**: Ensure that the output layer is appropriately configured to reflect the expected ranges of the derivatives. If necessary, consider adding a final activation function (like Tanh) to the output layer to ensure that the outputs remain within a certain range.
+
+By implementing these changes, the model should become more capable of fitting the dataset accurately while maintaining interpretability. Each adjustment should be tested iteratively to evaluate its impact on validation loss.
+MainProcess| 2025-10-18 13:42:36,539,539 multiprocessing INFO [User] 
+Please now regenerate the code function, with the aim to improve the code to achieve a lower validation error. Use the feedback where applicable. You are generating code for iteration 2 out of 5 total iterations. When generating code if you are unsure about something, take your best guess. You have to generate code, and cannot give an empty string answer.
+
+Please always only fill in the following code skeleton:```
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    # BLUEPRINT RECOMMENDATION:
+    # Main MLP: Linear(12→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→64) → LeakyReLU → Linear(64→4)
+    # Treatment gate: Linear(12→64) → LeakyReLU → Linear(64→1) → Softplus
+    # Example:
+    # self.fc1 = nn.Linear(12, 256)
+    # self.ln1 = nn.LayerNorm(256)  # NOT BatchNorm!
+    # self.fc2 = nn.Linear(256, 256)
+    # self.ln2 = nn.LayerNorm(256)
+    # self.fc3 = nn.Linear(256, 64)
+    # self.fc4 = nn.Linear(64, 4)
+    # self.dropout = nn.Dropout(0.2)
+    # self.gate_fc1 = nn.Linear(12, 64)
+    # self.gate_fc2 = nn.Linear(64, 1)
+
+  def forward(self,
+              tumor_size: torch.Tensor,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              treatment_encoded: torch.Tensor,
+              has_kit_mutation: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              site_small_intestine: torch.Tensor,
+              site_stomach: torch.Tensor,
+              treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # REQUIRED STEPS:
+    # 1. Concatenate ALL 12 inputs:
+    #    x = torch.cat([tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+    #                   age_at_diagnosis, stage_encoded, treatment_encoded,
+    #                   has_kit_mutation, tumor_purity,
+    #                   site_small_intestine, site_stomach,
+    #                   treatment_duration], dim=-1)
+    #    assert x.shape[-1] == 12, f"Expected 12 inputs, got {x.shape[-1]}"
+    #
+    # 2. Pass through MLP to get 4 raw derivatives
+    #
+    # 3. Compute monotone treatment gate:
+    #    gamma = F.softplus(gate_network(x))  # Always >= 0
+    #
+    # 4. Apply suppressive effect to tumor derivative:
+    #    d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+    #
+    # 5. Clamp all derivatives to plausible ranges:
+    #    d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)
+    #    d_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)
+    #    d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+    #    d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)
+    #
+    # 6. Return EXACTLY 4 derivatives in order:
+    return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+```
+You cannot change the code skeleton, or input variables.
+
+MainProcess| 2025-10-18 13:42:36,539,539 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 53.09% | Tokens remaining 3843]
+MainProcess| 2025-10-18 13:42:49,389,389 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-18 13:42:49,390,390 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom typing import Tuple\n\nclass StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\t# Main MLP\n\t\tself.fc1 = nn.Linear(12, 256)\n\t\tself.ln1 = nn.LayerNorm(256)\n\t\tself.fc2 = nn.Linear(256, 256)\n\t\tself.ln2 = nn.LayerNorm(256)\n\t\tself.fc3 = nn.Linear(256, 64)\n\t\tself.fc4 = nn.Linear(64, 4)\n\t\tself.dropout = nn.Dropout(0.1)  # Reduced dropout rate\n\t\t# Treatment gate\n\t\tself.gate_fc1 = nn.Linear(12, 64)\n\t\tself.gate_fc2 = nn.Linear(64, 1)\n\n\tdef forward(self,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\ttreatment_encoded: torch.Tensor,\n\t\t\thas_kit_mutation: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tsite_small_intestine: torch.Tensor,\n\t\t\tsite_stomach: torch.Tensor,\n\t\t\ttreatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n\t\t# Concatenate inputs\n\t\tx = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,\n\t\t\t\tage_at_diagnosis, stage_encoded, treatment_encoded,\n\t\t\t\thas_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)\n\t\tassert x.shape[-1] == 12, \"Input must have last dimension of size 12\"\n\n\t\t# Compute derivatives\n\t\tdynamics = self.fc4(self.dropout(F.leaky_relu(self.fc3(self.dropout(self.ln2(F.leaky_relu(self.fc2(self.dropout(self.ln1(F.leaky_relu(self.fc1(x)))))))))))))\n\t\td_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)\n\n\t\t# Compute treatment gate\n\t\tgamma = F.softplus(self.gate_fc2(F.leaky_relu(self.gate_fc1(x))))\n\n\t\t# Apply treatment effect\n\t\td_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration\n\n\t\t# Clamp outputs to physiological ranges\n\t\td_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)\n\t\td_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)\n\n\t\t# Sanity checks\n\t\tassert not torch.any(torch.isnan(dynamics)), \"Output contains NaN\"\n\t\tassert not torch.any(torch.isinf(dynamics)), \"Output contains Inf\"\n\n\t\treturn d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt","code_description":"This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction with improved architecture and regularization."}
+MainProcess| 2025-10-18 13:42:49,390,390 multiprocessing INFO [Invalid code, attempting to fix the code] unmatched ')' (<string>, line 54)
+MainProcess| 2025-10-18 13:42:49,391,391 multiprocessing INFO [NSDT | Dataset-CBIO | 43][Generation 2] | Top Fitness: 31.30970001220703 | Num Programs: 1 | Mean Fitness: 31.30970001220703 | Fitnesses: [31.30970001220703] | Current Gen Val Loss: 31.30970001220703
+MainProcess| 2025-10-18 13:42:49,391,391 multiprocessing INFO [NSDT | Dataset-CBIO | 43][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 43, 'generation': 2, 'top_fitness': 31.30970001220703, 'num_programs': 1, 'mean_fitness': np.float64(31.30970001220703), 'fitnesses': [31.30970001220703], 'current_gen_val_loss': 31.30970001220703}
+MainProcess| 2025-10-18 13:43:04,495,495 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-10-18 13:43:04,496,496 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Multi-Feature Treatment Response Model for GIST (CBIO Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model that outputs 4 derivatives for the 4 STATE variables, using 7 STATIC features for personalization and 1 CONTROL input (treatment_duration). Code must ONLY fill the provided class skeleton.
+
+INPUTS (order is FIXED; each is a [B,1] tensor):
+1. tumor_size (STATE)               [1.0–30.0] cm
+2. msi_score (STATE)                [0.0–10.0]
+3. tmb_nonsynonymous (STATE)        [0.0–3.0]
+4. mitotic_rate (STATE)             [0.0–100.0]
+5. age_at_diagnosis (STATIC)        [20–90] years
+6. stage_encoded (STATIC)           {0=Localized,1=Metastatic}
+7. treatment_encoded (STATIC)       {0=IMATINIB,1=SUNITINIB,2=REGORAFENIB,3=TRIAL,4=OTHER}
+8. has_kit_mutation (STATIC)        {0/1}
+9. tumor_purity (STATIC)            [0–100] %
+10. site_small_intestine (STATIC)   {0/1}
+11. site_stomach (STATIC)           {0/1}
+12. treatment_duration (CONTROL)    [0–2000] days (cumulative)
+
+OUTPUT (order is FIXED; each [B,1]):
+return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+
+HARD CONSTRAINTS (must implement):
+1) DO NOT use BatchNorm. If normalizing hidden reps, use LayerNorm.
+2) Treatment MUST matter and be **monotone suppressive** for tumor_size:
+   Implement a non-negative gate γ(x) = Softplus(MLP(all 12 inputs)) and apply:
+   d_tumor_size__dt = d_tumor_size__dt - γ * treatment_duration
+   This ensures higher treatment_duration makes growth less positive (or more negative).
+3) Stability: clamp derivatives to plausible ranges, e.g.:
+   d_tumor_size__dt ∈ [-5, 5], d_msi_score__dt ∈ [-1, 1], d_tmb_nonsynonymous__dt ∈ [-0.05, 0.05], d_mitotic_rate__dt ∈ [-10, 10].
+4) Activation & regularization: use LeakyReLU (or ELU), Dropout in [0.1,0.3]. Avoid exploding weights.
+5) Personalization: allow STATIC features to modulate the dynamics (e.g., via learned gates/embeddings or by concatenation into the MLP).
+6) Assertions: inside forward, assert concatenated input has last-dim = 12. Never return NaN/Inf.
+
+RECOMMENDED BLUEPRINT (simple and effective):
+- Concatenate ALL 12 inputs into x (dim=-1).
+- MLP block: Linear(12→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→64) → LeakyReLU → Linear(64→4).
+- Split outputs into (d_tumor, d_msi, d_tmb, d_mitotic).
+- Monotone treatment gate: γ = Softplus(Linear(12→64)→LeakyReLU→Linear(64→1)).
+- Apply d_tumor ← d_tumor - γ * treatment_duration.
+- Clamp all four derivatives to the given ranges.
+- Return them in the exact required order.
+
+MEDICAL PRIOR (lightweight; do NOT overconstrain):
+- Tumor growth tends to slow as mass increases (implicit via MLP + clamp).
+- Longer effective treatment typically reduces net growth → enforced by the monotone gate.
+- MSI/TMB/mitotic_rate change slowly vs tumor_size; keep derivative magnitudes small (use clamps).
+
+EVALUATION GUARD (implement as inline sanity checks / comments):
+- For a random batch, compute outputs twice: with treatment_duration=0 vs +1000. Ensure d_tumor_size__dt with +1000 is <= the value with 0 (monotone).
+- Ensure shapes: all inputs [B,1], concatenation → last-dim=12, outputs split in 4×[B,1].
+
+VARIABLE DESCRIPTIONS (for context):
+STATE VARIABLES (require derivatives):
+* tumor_size: Primary outcome measure, cm (longest diameter)
+* msi_score: Microsatellite instability (genomic biomarker)
+* tmb_nonsynonymous: Tumor mutational burden (mutation count)
+* mitotic_rate: Proliferation rate (mitoses per 50 HPF)
+
+STATIC FEATURES (NO derivatives - patient characteristics):
+* age_at_diagnosis: Patient age in years
+* stage_encoded: 0=Localized, 1=Metastatic
+* treatment_encoded: 0=IMATINIB (1st line), 1=SUNITINIB (2nd line), 2=REGORAFENIB (3rd line), 3=TRIAL, 4=OTHER
+* has_kit_mutation: 0=No, 1=Yes (KIT+ tumors respond better to IMATINIB)
+* tumor_purity: Percentage of tumor cells (affects biomarker reliability)
+* site_small_intestine: 1=Small Intestine, 0=Other
+* site_stomach: 1=Stomach, 0=Other
+
+CONTROL INPUT:
+* treatment_duration: Cumulative days of treatment (MUST suppress tumor growth monotonically)
+
+MainProcess| 2025-10-18 13:43:04,496,496 multiprocessing INFO [User] 
+You generated the following code completions, which then had their parameters optimized to the training dataset. Please reflect on how you can improve the code to minimize the validation loss to 1e-6 or less. The code examples are delineated by ###.
+
+Here are your previous iterations the best programs generated. Use it to see if you have exhausted white box models, i.e. when a white box model repeats with the same val loss and then only add black box models to the white box models:```
+Iteration 0. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+Iteration 1. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+Iteration 2. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+```
+
+Here are the top code completions so far that you have generated, sorted for the lowest validation loss last:```
+
+Val Loss: 31.3 (Where the val loss per dimension is tumor_size val loss: 10.5, msi_score val loss: 0.513, tmb_nonsynonymous val loss: 0.00257) Iteration: 0
+###
+```
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from typing import Tuple
+
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		self.mlp = nn.Sequential(
+			nn.Linear(12, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 4)
+		)
+		self.treatment_gate = nn.Sequential(
+			nn.Linear(12, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 1)
+		)
+
+	def forward(self, tumor_size: torch.Tensor, msi_score: torch.Tensor, tmb_nonsynonymous: torch.Tensor, mitotic_rate: torch.Tensor,
+			age_at_diagnosis: torch.Tensor, stage_encoded: torch.Tensor, treatment_encoded: torch.Tensor,
+			has_kit_mutation: torch.Tensor, tumor_purity: torch.Tensor, site_small_intestine: torch.Tensor,
+			site_stomach: torch.Tensor, treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+		# Concatenate inputs
+		x = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+			age_at_diagnosis, stage_encoded, treatment_encoded,
+			has_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)
+		assert x.shape[-1] == 12, "Input must have last dimension of size 12"
+
+		# Compute derivatives
+		dynamics = self.mlp(x)
+		d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)
+
+		# Compute treatment gate
+		gamma = F.softplus(self.treatment_gate(x))
+
+		# Apply treatment effect
+		d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+
+		# Clamp outputs to physiological ranges
+		d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+		d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)
+
+		# Sanity checks
+		assert not torch.any(torch.isnan(dynamics)), "Output contains NaN"
+		assert not torch.any(torch.isinf(dynamics)), "Output contains Inf"
+
+		return d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt
+```
+optimized_parameters = {}
+###
+
+
+```
+
+Please reflect on how you can improve the code to fit the dataset as accurately as possible, and be interpretable. Think step-by-step. Provide only actionable feedback, that has direct changes to the code. Do not write out the code, only describe how it can be improved. Where applicable use the values of the optimized parameters to reason how the code can be improved to fit the dataset as accurately as possible. This is for generating new code for the next iteration 3 out of 5.
+
+MainProcess| 2025-10-18 13:43:04,496,496 multiprocessing INFO [Assistant] To improve the model and minimize the validation loss to 1e-6 or less, consider the following actionable feedback:
+
+1. **Increase Model Capacity**: The current architecture has a maximum of 256 hidden units in the MLP. Experiment with increasing the number of units or adding more layers to capture more complex relationships in the data. For instance, you could add another layer after the existing 256 units or increase the size of the last layer to 128 units.
+
+2. **Adjust Activation Functions**: While LeakyReLU is a good choice, consider experimenting with ELU (Exponential Linear Unit) for the hidden layers. ELU can help with faster convergence and better performance in some cases due to its non-zero output for negative inputs.
+
+3. **Refine Dropout Rates**: The current dropout rate of 0.2 may be too high or too low depending on the dataset. Experiment with different dropout rates (e.g., 0.1, 0.15, 0.25) to find the optimal balance between regularization and model capacity.
+
+4. **Modify Treatment Gate**: The treatment gate currently uses a simple linear layer followed by LeakyReLU. Consider adding a LayerNorm after the first linear layer in the treatment gate to stabilize the learning process and improve convergence.
+
+5. **Revisit Clamping Values**: The clamping ranges for the derivatives are currently set based on physiological plausibility. However, if the model is consistently hitting these limits, it may indicate that the model is not learning effectively. Consider adjusting these ranges based on the distribution of the training data or allowing for a slightly wider range to enable more flexibility in learning.
+
+6. **Add Residual Connections**: To improve the flow of gradients during training, consider adding residual connections in the MLP. This can help the model learn more effectively by allowing it to bypass certain layers if needed.
+
+7. **Normalization of Inputs**: Ensure that the input features are normalized (e.g., standardization or min-max scaling) before being fed into the model. This can help the model converge faster and improve performance.
+
+8. **Regularization Techniques**: In addition to dropout, consider adding L2 regularization to the weights of the linear layers. This can help prevent overfitting and improve generalization.
+
+9. **Batch Size Considerations**: Although the model is designed to work with batch size = 1, consider testing with larger batch sizes if possible. This can help stabilize the training process and provide better gradient estimates.
+
+10. **Monitor Learning Rate**: Experiment with different learning rates and consider using a learning rate scheduler to adjust the learning rate dynamically during training. This can help the model converge more effectively.
+
+By implementing these changes, you can enhance the model's ability to fit the dataset accurately while maintaining interpretability. Each of these suggestions can be tested iteratively to assess their impact on validation loss.
+MainProcess| 2025-10-18 13:43:04,496,496 multiprocessing INFO [User] 
+Please now regenerate the code function, with the aim to improve the code to achieve a lower validation error. Use the feedback where applicable. You are generating code for iteration 3 out of 5 total iterations. When generating code if you are unsure about something, take your best guess. You have to generate code, and cannot give an empty string answer.
+
+Please always only fill in the following code skeleton:```
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    # BLUEPRINT RECOMMENDATION:
+    # Main MLP: Linear(12→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→64) → LeakyReLU → Linear(64→4)
+    # Treatment gate: Linear(12→64) → LeakyReLU → Linear(64→1) → Softplus
+    # Example:
+    # self.fc1 = nn.Linear(12, 256)
+    # self.ln1 = nn.LayerNorm(256)  # NOT BatchNorm!
+    # self.fc2 = nn.Linear(256, 256)
+    # self.ln2 = nn.LayerNorm(256)
+    # self.fc3 = nn.Linear(256, 64)
+    # self.fc4 = nn.Linear(64, 4)
+    # self.dropout = nn.Dropout(0.2)
+    # self.gate_fc1 = nn.Linear(12, 64)
+    # self.gate_fc2 = nn.Linear(64, 1)
+
+  def forward(self,
+              tumor_size: torch.Tensor,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              treatment_encoded: torch.Tensor,
+              has_kit_mutation: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              site_small_intestine: torch.Tensor,
+              site_stomach: torch.Tensor,
+              treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # REQUIRED STEPS:
+    # 1. Concatenate ALL 12 inputs:
+    #    x = torch.cat([tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+    #                   age_at_diagnosis, stage_encoded, treatment_encoded,
+    #                   has_kit_mutation, tumor_purity,
+    #                   site_small_intestine, site_stomach,
+    #                   treatment_duration], dim=-1)
+    #    assert x.shape[-1] == 12, f"Expected 12 inputs, got {x.shape[-1]}"
+    #
+    # 2. Pass through MLP to get 4 raw derivatives
+    #
+    # 3. Compute monotone treatment gate:
+    #    gamma = F.softplus(gate_network(x))  # Always >= 0
+    #
+    # 4. Apply suppressive effect to tumor derivative:
+    #    d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+    #
+    # 5. Clamp all derivatives to plausible ranges:
+    #    d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)
+    #    d_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)
+    #    d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+    #    d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)
+    #
+    # 6. Return EXACTLY 4 derivatives in order:
+    return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+```
+You cannot change the code skeleton, or input variables.
+
+MainProcess| 2025-10-18 13:43:04,497,497 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 53.60% | Tokens remaining 3801]
+MainProcess| 2025-10-18 13:43:18,828,828 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-18 13:43:18,829,829 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom typing import Tuple\n\nclass StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\t# Main MLP\n\t\tself.fc1 = nn.Linear(12, 256)\n\t\tself.ln1 = nn.LayerNorm(256)\n\t\tself.fc2 = nn.Linear(256, 256)\n\t\tself.ln2 = nn.LayerNorm(256)\n\t\tself.fc3 = nn.Linear(256, 128)\n\t\tself.fc4 = nn.Linear(128, 4)\n\t\tself.dropout = nn.Dropout(0.15)  # Adjusted dropout rate\n\t\t# Treatment gate\n\t\tself.gate_fc1 = nn.Linear(12, 64)\n\t\tself.gate_ln1 = nn.LayerNorm(64)  # Added LayerNorm\n\t\tself.gate_fc2 = nn.Linear(64, 1)\n\n\tdef forward(self,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\ttreatment_encoded: torch.Tensor,\n\t\t\thas_kit_mutation: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tsite_small_intestine: torch.Tensor,\n\t\t\tsite_stomach: torch.Tensor,\n\t\t\ttreatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n\t\t# Concatenate inputs\n\t\tx = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,\n\t\t\t\tage_at_diagnosis, stage_encoded, treatment_encoded,\n\t\t\t\thas_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)\n\t\tassert x.shape[-1] == 12, \"Input must have last dimension of size 12\"\n\n\t\t# Compute derivatives\n\t\tdynamics = self.fc4(self.dropout(F.leaky_relu(self.fc3(self.dropout(self.ln2(F.leaky_relu(self.fc2(self.dropout(self.ln1(F.leaky_relu(self.fc1(x)))))))))))))\n\t\td_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)\n\n\t\t# Compute treatment gate\n\t\tgamma = F.softplus(self.gate_fc2(self.gate_ln1(F.leaky_relu(self.gate_fc1(x)))))\n\n\t\t# Apply treatment effect\n\t\td_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration\n\n\t\t# Clamp outputs to physiological ranges\n\t\td_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)\n\t\td_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)\n\n\t\t# Sanity checks\n\t\tassert not torch.any(torch.isnan(dynamics)), \"Output contains NaN\"\n\t\tassert not torch.any(torch.isinf(dynamics)), \"Output contains Inf\"\n\n\t\treturn d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt","code_description":"This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction with improved architecture and regularization."}
+MainProcess| 2025-10-18 13:43:18,830,830 multiprocessing INFO [Invalid code, attempting to fix the code] unmatched ')' (<string>, line 55)
+MainProcess| 2025-10-18 13:43:18,831,831 multiprocessing INFO [NSDT | Dataset-CBIO | 43][Generation 3] | Top Fitness: 31.30970001220703 | Num Programs: 1 | Mean Fitness: 31.30970001220703 | Fitnesses: [31.30970001220703] | Current Gen Val Loss: 31.30970001220703
+MainProcess| 2025-10-18 13:43:18,831,831 multiprocessing INFO [NSDT | Dataset-CBIO | 43][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 43, 'generation': 3, 'top_fitness': 31.30970001220703, 'num_programs': 1, 'mean_fitness': np.float64(31.30970001220703), 'fitnesses': [31.30970001220703], 'current_gen_val_loss': 31.30970001220703}
+MainProcess| 2025-10-18 13:43:26,715,715 multiprocessing INFO [System] 
+Objective: Write fully functional PyTorch code that fills the provided class skeleton ONLY, to create an effective differential-equation-like simulator for the specified environment. No placeholders, no extra files.
+
+Non-negotiable rules:
+- Do NOT change the class name, method names, argument order, or return types.
+- Fill ONLY the TODOs INSIDE the skeleton. You may define submodules and small private helper methods INSIDE the class, but must not add new public methods or change signatures.
+- Code must run with batch size = 1 (and any B>=1). Therefore:
+  * Do NOT use BatchNorm of any kind. If you need normalization, use LayerNorm.
+- Use only PyTorch standard library (torch, torch.nn, torch.nn.functional) and typing.Tuple.
+- All tensors are float32; assume inputs come as shape [B,1]. Concatenate on last dim.
+- Enforce numerical stability: clamp outputs to physiologically plausible ranges.
+- Treatment/control inputs MUST influence the dynamics as required by the environment.
+- Prefer monotone-increasing or monotone-decreasing effects when medically sensible (see env description).
+- Use LeakyReLU or ELU (avoid dead ReLU), Dropout in {0.1–0.3}, and avoid weight explosions.
+
+Quality bar:
+- Prefer a hybrid design: simple mechanistic prior + residual MLP correction.
+- If using gates, ensure positivity via Softplus.
+- No randomness, no training loops here, just the model class.
+
+Self-checks inside forward:
+- Assert the concatenated input has last-dim size equal to the specified count.
+- Never return NaN/Inf; clamp derivatives.
+
+Indent code with tabs. Return the complete class code body.
+MainProcess| 2025-10-18 13:43:26,716,716 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Multi-Feature Treatment Response Model for GIST (CBIO Dataset)
+
+GOAL:
+Implement a neural ODE-like differential model that outputs 4 derivatives for the 4 STATE variables, using 7 STATIC features for personalization and 1 CONTROL input (treatment_duration). Code must ONLY fill the provided class skeleton.
+
+INPUTS (order is FIXED; each is a [B,1] tensor):
+1. tumor_size (STATE)               [1.0–30.0] cm
+2. msi_score (STATE)                [0.0–10.0]
+3. tmb_nonsynonymous (STATE)        [0.0–3.0]
+4. mitotic_rate (STATE)             [0.0–100.0]
+5. age_at_diagnosis (STATIC)        [20–90] years
+6. stage_encoded (STATIC)           {0=Localized,1=Metastatic}
+7. treatment_encoded (STATIC)       {0=IMATINIB,1=SUNITINIB,2=REGORAFENIB,3=TRIAL,4=OTHER}
+8. has_kit_mutation (STATIC)        {0/1}
+9. tumor_purity (STATIC)            [0–100] %
+10. site_small_intestine (STATIC)   {0/1}
+11. site_stomach (STATIC)           {0/1}
+12. treatment_duration (CONTROL)    [0–2000] days (cumulative)
+
+OUTPUT (order is FIXED; each [B,1]):
+return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+
+HARD CONSTRAINTS (must implement):
+1) DO NOT use BatchNorm. If normalizing hidden reps, use LayerNorm.
+2) Treatment MUST matter and be **monotone suppressive** for tumor_size:
+   Implement a non-negative gate γ(x) = Softplus(MLP(all 12 inputs)) and apply:
+   d_tumor_size__dt = d_tumor_size__dt - γ * treatment_duration
+   This ensures higher treatment_duration makes growth less positive (or more negative).
+3) Stability: clamp derivatives to plausible ranges, e.g.:
+   d_tumor_size__dt ∈ [-5, 5], d_msi_score__dt ∈ [-1, 1], d_tmb_nonsynonymous__dt ∈ [-0.05, 0.05], d_mitotic_rate__dt ∈ [-10, 10].
+4) Activation & regularization: use LeakyReLU (or ELU), Dropout in [0.1,0.3]. Avoid exploding weights.
+5) Personalization: allow STATIC features to modulate the dynamics (e.g., via learned gates/embeddings or by concatenation into the MLP).
+6) Assertions: inside forward, assert concatenated input has last-dim = 12. Never return NaN/Inf.
+
+RECOMMENDED BLUEPRINT (simple and effective):
+- Concatenate ALL 12 inputs into x (dim=-1).
+- MLP block: Linear(12→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→256) → LayerNorm(256) → LeakyReLU → Dropout(0.2) → Linear(256→64) → LeakyReLU → Linear(64→4).
+- Split outputs into (d_tumor, d_msi, d_tmb, d_mitotic).
+- Monotone treatment gate: γ = Softplus(Linear(12→64)→LeakyReLU→Linear(64→1)).
+- Apply d_tumor ← d_tumor - γ * treatment_duration.
+- Clamp all four derivatives to the given ranges.
+- Return them in the exact required order.
+
+MEDICAL PRIOR (lightweight; do NOT overconstrain):
+- Tumor growth tends to slow as mass increases (implicit via MLP + clamp).
+- Longer effective treatment typically reduces net growth → enforced by the monotone gate.
+- MSI/TMB/mitotic_rate change slowly vs tumor_size; keep derivative magnitudes small (use clamps).
+
+EVALUATION GUARD (implement as inline sanity checks / comments):
+- For a random batch, compute outputs twice: with treatment_duration=0 vs +1000. Ensure d_tumor_size__dt with +1000 is <= the value with 0 (monotone).
+- Ensure shapes: all inputs [B,1], concatenation → last-dim=12, outputs split in 4×[B,1].
+
+VARIABLE DESCRIPTIONS (for context):
+STATE VARIABLES (require derivatives):
+* tumor_size: Primary outcome measure, cm (longest diameter)
+* msi_score: Microsatellite instability (genomic biomarker)
+* tmb_nonsynonymous: Tumor mutational burden (mutation count)
+* mitotic_rate: Proliferation rate (mitoses per 50 HPF)
+
+STATIC FEATURES (NO derivatives - patient characteristics):
+* age_at_diagnosis: Patient age in years
+* stage_encoded: 0=Localized, 1=Metastatic
+* treatment_encoded: 0=IMATINIB (1st line), 1=SUNITINIB (2nd line), 2=REGORAFENIB (3rd line), 3=TRIAL, 4=OTHER
+* has_kit_mutation: 0=No, 1=Yes (KIT+ tumors respond better to IMATINIB)
+* tumor_purity: Percentage of tumor cells (affects biomarker reliability)
+* site_small_intestine: 1=Small Intestine, 0=Other
+* site_stomach: 1=Stomach, 0=Other
+
+CONTROL INPUT:
+* treatment_duration: Cumulative days of treatment (MUST suppress tumor growth monotonically)
+
+MainProcess| 2025-10-18 13:43:26,716,716 multiprocessing INFO [User] 
+You generated the following code completions, which then had their parameters optimized to the training dataset. Please reflect on how you can improve the code to minimize the validation loss to 1e-6 or less. The code examples are delineated by ###.
+
+Here are your previous iterations the best programs generated. Use it to see if you have exhausted white box models, i.e. when a white box model repeats with the same val loss and then only add black box models to the white box models:```
+Iteration 0. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+Iteration 1. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+Iteration 2. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+Iteration 3. Best Val Loss: 31.30970001220703. Model description: This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.
+```
+
+Here are the top code completions so far that you have generated, sorted for the lowest validation loss last:```
+
+Val Loss: 31.3 (Where the val loss per dimension is tumor_size val loss: 10.5, msi_score val loss: 0.513, tmb_nonsynonymous val loss: 0.00257) Iteration: 0
+###
+```
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from typing import Tuple
+
+class StateDifferential(nn.Module):
+	def __init__(self):
+		super(StateDifferential, self).__init__()
+		self.mlp = nn.Sequential(
+			nn.Linear(12, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 256),
+			nn.LayerNorm(256),
+			nn.LeakyReLU(0.1),
+			nn.Dropout(0.2),
+			nn.Linear(256, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 4)
+		)
+		self.treatment_gate = nn.Sequential(
+			nn.Linear(12, 64),
+			nn.LeakyReLU(0.1),
+			nn.Linear(64, 1)
+		)
+
+	def forward(self, tumor_size: torch.Tensor, msi_score: torch.Tensor, tmb_nonsynonymous: torch.Tensor, mitotic_rate: torch.Tensor,
+			age_at_diagnosis: torch.Tensor, stage_encoded: torch.Tensor, treatment_encoded: torch.Tensor,
+			has_kit_mutation: torch.Tensor, tumor_purity: torch.Tensor, site_small_intestine: torch.Tensor,
+			site_stomach: torch.Tensor, treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+		# Concatenate inputs
+		x = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+			age_at_diagnosis, stage_encoded, treatment_encoded,
+			has_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)
+		assert x.shape[-1] == 12, "Input must have last dimension of size 12"
+
+		# Compute derivatives
+		dynamics = self.mlp(x)
+		d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)
+
+		# Compute treatment gate
+		gamma = F.softplus(self.treatment_gate(x))
+
+		# Apply treatment effect
+		d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+
+		# Clamp outputs to physiological ranges
+		d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)
+		d_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)
+		d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+		d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)
+
+		# Sanity checks
+		assert not torch.any(torch.isnan(dynamics)), "Output contains NaN"
+		assert not torch.any(torch.isinf(dynamics)), "Output contains Inf"
+
+		return d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt
+```
+optimized_parameters = {}
+###
+
+
+```
+
+Please reflect on how you can improve the code to fit the dataset as accurately as possible, and be interpretable. Think step-by-step. Provide only actionable feedback, that has direct changes to the code. Do not write out the code, only describe how it can be improved. Where applicable use the values of the optimized parameters to reason how the code can be improved to fit the dataset as accurately as possible. This is for generating new code for the next iteration 4 out of 5.
+
+MainProcess| 2025-10-18 13:43:26,717,717 multiprocessing INFO [Assistant] To improve the model and minimize the validation loss to 1e-6 or less, consider the following actionable steps:
+
+1. **Increase Model Capacity**: The current architecture has a maximum of 256 hidden units in the MLP. Experiment with increasing the number of units or adding more layers to capture more complex relationships in the data. For instance, you could add another layer after the existing 256-unit layers or increase the size of the final layer to 128 units.
+
+2. **Adjust Activation Functions**: While LeakyReLU is a good choice, consider experimenting with ELU or Swish activations, which can sometimes provide better performance by allowing for smoother gradients and avoiding dead neurons.
+
+3. **Refine Dropout Rates**: The current dropout rate of 0.2 may be too high or too low. Experiment with different dropout rates (e.g., 0.1 or 0.3) to find a balance that prevents overfitting while still allowing the model to learn effectively.
+
+4. **Enhance Treatment Gate**: The treatment gate currently uses a simple linear layer followed by LeakyReLU. Consider adding a non-linear transformation (e.g., another layer or a more complex activation function) to better model the relationship between treatment duration and tumor size dynamics.
+
+5. **Regularization Techniques**: Introduce L2 regularization (weight decay) in the optimizer to prevent overfitting. This can help stabilize the training process and improve generalization.
+
+6. **Learning Rate Scheduling**: Implement a learning rate scheduler that reduces the learning rate when the validation loss plateaus. This can help the model converge more effectively.
+
+7. **Batch Normalization**: Although the requirement specifies not to use BatchNorm, consider using LayerNorm more effectively throughout the network, especially after each linear layer, to stabilize training.
+
+8. **Output Clamping**: Ensure that the clamping ranges for the derivatives are appropriate. If the model is consistently hitting the clamping limits, it may indicate that the model is not learning effectively. Adjust the ranges based on the data distribution or consider using a more dynamic clamping strategy.
+
+9. **Data Normalization**: Ensure that all input features are normalized (e.g., min-max scaling) to have similar ranges. This can help the model learn more effectively, especially when dealing with features that have different scales.
+
+10. **Sanity Checks**: Enhance the sanity checks to include checks for gradient norms to ensure that they are within reasonable bounds. This can help identify issues with exploding gradients early in the training process.
+
+By implementing these changes, you can enhance the model's ability to fit the dataset accurately while maintaining interpretability. Each of these steps should be tested iteratively to assess their impact on validation loss.
+MainProcess| 2025-10-18 13:43:26,717,717 multiprocessing INFO [User] 
+Please now regenerate the code function, with the aim to improve the code to achieve a lower validation error. Use the feedback where applicable. You are generating code for iteration 4 out of 5 total iterations. When generating code if you are unsure about something, take your best guess. You have to generate code, and cannot give an empty string answer.
+
+Please always only fill in the following code skeleton:```
+class StateDifferential(nn.Module):
+  def __init__(self):
+    super(StateDifferential, self).__init__()
+    # TODO: Fill in the code here
+    # BLUEPRINT RECOMMENDATION:
+    # Main MLP: Linear(12→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→256) → LayerNorm → LeakyReLU → Dropout(0.2)
+    #           → Linear(256→64) → LeakyReLU → Linear(64→4)
+    # Treatment gate: Linear(12→64) → LeakyReLU → Linear(64→1) → Softplus
+    # Example:
+    # self.fc1 = nn.Linear(12, 256)
+    # self.ln1 = nn.LayerNorm(256)  # NOT BatchNorm!
+    # self.fc2 = nn.Linear(256, 256)
+    # self.ln2 = nn.LayerNorm(256)
+    # self.fc3 = nn.Linear(256, 64)
+    # self.fc4 = nn.Linear(64, 4)
+    # self.dropout = nn.Dropout(0.2)
+    # self.gate_fc1 = nn.Linear(12, 64)
+    # self.gate_fc2 = nn.Linear(64, 1)
+
+  def forward(self,
+              tumor_size: torch.Tensor,
+              msi_score: torch.Tensor,
+              tmb_nonsynonymous: torch.Tensor,
+              mitotic_rate: torch.Tensor,
+              age_at_diagnosis: torch.Tensor,
+              stage_encoded: torch.Tensor,
+              treatment_encoded: torch.Tensor,
+              has_kit_mutation: torch.Tensor,
+              tumor_purity: torch.Tensor,
+              site_small_intestine: torch.Tensor,
+              site_stomach: torch.Tensor,
+              treatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    # TODO: Fill in the code here
+    # REQUIRED STEPS:
+    # 1. Concatenate ALL 12 inputs:
+    #    x = torch.cat([tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,
+    #                   age_at_diagnosis, stage_encoded, treatment_encoded,
+    #                   has_kit_mutation, tumor_purity,
+    #                   site_small_intestine, site_stomach,
+    #                   treatment_duration], dim=-1)
+    #    assert x.shape[-1] == 12, f"Expected 12 inputs, got {x.shape[-1]}"
+    #
+    # 2. Pass through MLP to get 4 raw derivatives
+    #
+    # 3. Compute monotone treatment gate:
+    #    gamma = F.softplus(gate_network(x))  # Always >= 0
+    #
+    # 4. Apply suppressive effect to tumor derivative:
+    #    d_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration
+    #
+    # 5. Clamp all derivatives to plausible ranges:
+    #    d_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5.0, 5.0)
+    #    d_msi_score__dt = torch.clamp(d_msi_score__dt, -1.0, 1.0)
+    #    d_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)
+    #    d_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10.0, 10.0)
+    #
+    # 6. Return EXACTLY 4 derivatives in order:
+    return (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt)
+```
+You cannot change the code skeleton, or input variables.
+
+MainProcess| 2025-10-18 13:43:26,717,717 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 53.89% | Tokens remaining 3777]
+MainProcess| 2025-10-18 13:43:40,230,230 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-18 13:43:40,231,231 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {"StateDifferential_code":"import torch\nimport torch.nn as nn\nimport torch.nn.functional as F\nfrom typing import Tuple\n\nclass StateDifferential(nn.Module):\n\tdef __init__(self):\n\t\tsuper(StateDifferential, self).__init__()\n\t\tself.fc1 = nn.Linear(12, 256)\n\t\tself.ln1 = nn.LayerNorm(256)\n\t\tself.fc2 = nn.Linear(256, 256)\n\t\tself.ln2 = nn.LayerNorm(256)\n\t\tself.fc3 = nn.Linear(256, 128)\n\t\tself.fc4 = nn.Linear(128, 4)\n\t\tself.dropout = nn.Dropout(0.2)\n\t\tself.gate_fc1 = nn.Linear(12, 64)\n\t\tself.gate_fc2 = nn.Linear(64, 1)\n\n\tdef forward(self,\n\t\t\ttumor_size: torch.Tensor,\n\t\t\tmsi_score: torch.Tensor,\n\t\t\ttmb_nonsynonymous: torch.Tensor,\n\t\t\tmitotic_rate: torch.Tensor,\n\t\t\tage_at_diagnosis: torch.Tensor,\n\t\t\tstage_encoded: torch.Tensor,\n\t\t\ttreatment_encoded: torch.Tensor,\n\t\t\thas_kit_mutation: torch.Tensor,\n\t\t\ttumor_purity: torch.Tensor,\n\t\t\tsite_small_intestine: torch.Tensor,\n\t\t\tsite_stomach: torch.Tensor,\n\t\t\ttreatment_duration: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n\t\t# Concatenate inputs\n\t\tx = torch.cat((tumor_size, msi_score, tmb_nonsynonymous, mitotic_rate,\n\t\t\t\tage_at_diagnosis, stage_encoded, treatment_encoded,\n\t\t\t\thas_kit_mutation, tumor_purity, site_small_intestine, site_stomach, treatment_duration), dim=-1)\n\t\tassert x.shape[-1] == 12, \"Input must have last dimension of size 12\"\n\n\t\t# Compute derivatives\n\t\tdynamics = self.fc4(F.elu(self.dropout(self.ln2(F.elu(self.dropout(self.ln1(self.fc2(F.elu(self.dropout(self.ln1(self.fc1(x)))))))))))))\n\t\td_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt = dynamics.split(1, dim=-1)\n\n\t\t# Compute treatment gate\n\t\tgamma = F.softplus(self.gate_fc2(F.elu(self.gate_fc1(x))))\n\n\t\t# Apply treatment effect\n\t\td_tumor_size__dt = d_tumor_size__dt - gamma * treatment_duration\n\n\t\t# Clamp outputs to physiological ranges\n\t\td_tumor_size__dt = torch.clamp(d_tumor_size__dt, -5, 5)\n\t\td_msi_score__dt = torch.clamp(d_msi_score__dt, -1, 1)\n\t\td_tmb_nonsynonymous__dt = torch.clamp(d_tmb_nonsynonymous__dt, -0.05, 0.05)\n\t\td_mitotic_rate__dt = torch.clamp(d_mitotic_rate__dt, -10, 10)\n\n\t\t# Sanity checks\n\t\tassert not torch.any(torch.isnan(dynamics)), \"Output contains NaN\"\n\t\tassert not torch.any(torch.isinf(dynamics)), \"Output contains Inf\"\n\n\t\treturn d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt, d_mitotic_rate__dt","code_description":"This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction with improved architecture and activation functions."}
+MainProcess| 2025-10-18 13:43:40,232,232 multiprocessing INFO [Invalid code, attempting to fix the code] unmatched ')' (<string>, line 52)
+MainProcess| 2025-10-18 13:43:40,232,232 multiprocessing INFO [NSDT | Dataset-CBIO | 43][Generation 4] | Top Fitness: 31.30970001220703 | Num Programs: 1 | Mean Fitness: 31.30970001220703 | Fitnesses: [31.30970001220703] | Current Gen Val Loss: 31.30970001220703
+MainProcess| 2025-10-18 13:43:40,232,232 multiprocessing INFO [NSDT | Dataset-CBIO | 43][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 43, 'generation': 4, 'top_fitness': 31.30970001220703, 'num_programs': 1, 'mean_fitness': np.float64(31.30970001220703), 'fitnesses': [31.30970001220703], 'current_gen_val_loss': 31.30970001220703}
+MainProcess| 2025-10-18 13:43:40,235,235 multiprocessing INFO [Model code saved to] saved_models/cbio/best_model_Dataset-CBIO_seed43.py
+MainProcess| 2025-10-18 13:43:40,235,235 multiprocessing INFO [Model metadata saved to] saved_models/cbio/best_model_Dataset-CBIO_seed43_metadata.json
+MainProcess| 2025-10-18 13:43:40,235,235 multiprocessing INFO [Dataset-CBIO NSDT 43][Test Run completed successfully] MSE TEST LOSS 26.9906
+MainProcess| 2025-10-18 13:43:40,235,235 multiprocessing INFO [Exp evaluation complete] {'method_name': 'NSDT', 'env_name': 'Dataset-CBIO', 'episode_elapsed_time': 187.19863654201617, 'episode_elapsed_time_per_episode': 187.19863708305638, 'test_mse': 26.990577697753906, 'trajectories': 1, 'method': 'NSDT', 'seed': 43, 'seconds_taken': 187.20724445901578, 'experiment': 'MAIN_TABLE', 'errored': False}
+MainProcess| 2025-10-18 13:43:40,235,235 multiprocessing INFO Time taken for all runs: 197.81661291699857s	| 3.296943548616643 minutes
+MainProcess| 2025-10-18 13:43:40,235,235 multiprocessing INFO [Log found at] logs/run-20251018-134022_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-18 13:43:40,287,287 multiprocessing INFO Tables: (       env_name method  seed     episode_elapsed_time      ...   test_mse     trajectories     seconds_taken    
+                        mean  ci                 mean  ci  ...       mean  ci         mean  ci          mean  ci
+0  Dataset-CBIO   NSDT  43.0 NaN           187.198637 NaN  ...  26.990578 NaN          1.0 NaN    187.207244 NaN
+
+[1 rows x 14 columns], '\\begin{tabular}{@{}lc}\n\\toprule\n&  Dataset-CBIO\\\\\nPolicy $\\mathcal{R}$ \\\\\n\\midrule\nNSDT&27$\\pm$nan\\\\\n\\bottomrule\n\\end{tabular}')
+MainProcess| 2025-10-18 13:43:40,287,287 multiprocessing INFO Run over. Fin.
+MainProcess| 2025-10-18 13:43:40,287,287 multiprocessing INFO [Log found at] logs/run-20251018-134022_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-18 13:43:40,290,290 multiprocessing INFO process shutting down

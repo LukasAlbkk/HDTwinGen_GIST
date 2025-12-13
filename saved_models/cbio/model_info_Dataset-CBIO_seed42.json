@@ -1,0 +1,12 @@
+{
+  "env_name": "Dataset-CBIO",
+  "seed": 42,
+  "val_loss": 28.987037658691406,
+  "train_loss": 44.69786071777344,
+  "model_path": "saved_models/cbio/best_model_Dataset-CBIO_seed42.pt",
+  "config": {
+    "epochs": 400,
+    "learning_rate": 0.001,
+    "batch_size": 1
+  }
+}

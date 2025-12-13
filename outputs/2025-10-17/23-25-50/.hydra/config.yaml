@@ -1,0 +1,63 @@
+run:
+  samples: 25
+  max_episodes: 1
+  log_path: ''
+  device: ''
+  model: gpt-4-0613
+  temperature: 0.7
+  top_p: 0.95
+  frequency_penalty: 0
+  presence_penalty: 0
+  stop: ''
+  dynode_learning_rate: 0.01
+  rnn_learning_rate: 0.01
+  optimizer: pytorch
+  keep_top_samples: 5
+  reflection_history: 3
+  sub_group_resample: 2
+  generations: 10
+  nsdt_patience: 20
+  optimize_params: true
+  optimization:
+    patience: 40
+    log_optimization: true
+  pytorch_as_optimizer:
+    batch_size: 1
+    learning_rate: 0.003
+    weight_decay: 0.0001
+    epochs: 600
+    log_interval: 50
+  dynode_retrain_model: true
+  dynode_saved_models_folder: saved_models/cbio
+setup:
+  trajectories_sweep:
+  - 1000
+  use_azure_api: false
+  debug_mode: false
+  flush_mode: false
+  multi_process_results: false
+  multi_process_cores: 4
+  experiment: MAIN_TABLE
+  methods_to_evaluate:
+  - NSDT
+  envs_to_evaluate:
+  - Dataset-CBIO
+  wandb:
+    project: HDTwinGen_CBIO_HighQuality
+    track: false
+  log_dir: logs
+  torch_deterministic: true
+  seed_start: 42
+  seed_runs: 3
+  enable_tests: false
+  cuda: false
+  data_science_env_use_description: false
+  open_ai_rate_limit_requests_per_minute: 3000
+  api_retry_with_exponential_backoff__initial_delay: 1
+  api_retry_with_exponential_backoff__exponential_base: 2
+  api_retry_with_exponential_backoff__jitter: true
+  api_retry_with_exponential_backoff__max_retries: 10
+  api_request_timeout: 60000
+  api_stream: false
+  force_recache: false
+  load_from_cache: true

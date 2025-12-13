@@ -1,0 +1,1156 @@
+MainProcess| 2025-10-11 13:10:20,719,719 multiprocessing INFO Starting run 	 | See log at : logs/run-20251011-131020_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 13:10:20,719,719 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251011-131020_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-11 13:10:20,719,719 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-11 13:10:20,721,721 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-11 13:10:20,739,739 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 10 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:10:20,753,753 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:10:20,753,753 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:10:20,753,753 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:10:32,259,259 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:10:32,259,259 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The model does not explicitly take treatment_duration as an input, but it is assumed that the input state variables are a function of treatment_duration."
+}
+MainProcess| 2025-10-11 13:12:20,111,111 multiprocessing INFO Early stopping triggered at epoch 1010
+MainProcess| 2025-10-11 13:12:20,141,141 multiprocessing INFO [NSDT | Dataset-CBIO | 10][Generation 0] | Top Fitness: 0.23680312931537628 | Num Programs: 1 | Mean Fitness: 0.23680312931537628 | Fitnesses: [0.23680312931537628] | Current Gen Val Loss: 0.23680312931537628
+MainProcess| 2025-10-11 13:12:20,142,142 multiprocessing INFO [NSDT | Dataset-CBIO | 10][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 10, 'generation': 0, 'top_fitness': 0.23680312931537628, 'num_programs': 1, 'mean_fitness': np.float64(0.23680312931537628), 'fitnesses': [0.23680312931537628], 'current_gen_val_loss': 0.23680312931537628}
+MainProcess| 2025-10-11 13:12:20,142,142 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:12:20,147,147 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:12:20,147,147 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:12:20,147,147 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-11 13:12:20,154,154 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-11 13:12:20,178,178 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 11 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:12:20,185,185 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:12:20,185,185 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:12:20,185,185 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:12:36,887,887 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:12:36,888,888 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+        
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+        
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+        
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+        
+        # Treatment duration differential
+        treatment_duration = torch.relu(self.fc1(treatment_duration))
+        treatment_duration = torch.relu(self.fc2(treatment_duration))
+        treatment_duration_diff = self.fc3(treatment_duration)
+        
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff, treatment_duration_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, tmb_nonsynonymous, and treatment_duration. Each variable is passed through the network separately and the output is the predicted change in each variable over time."
+}
+MainProcess| 2025-10-11 13:12:36,908,908 multiprocessing ERROR [Error] The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 380, in _run
+    function_return_message, code_dict, has_success = process_function_call_and_return_message(response_message["function_call"], self.simulator_code_dict, env=self.env, functions=self.functions, config=self.config, logger=self.logger)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 114, in process_function_call_and_return_message
+    function_response, simulator_code_dict, has_success = function_to_call(**function_args)
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 25, in complete_StateDifferential_code
+    train_loss, val_loss, optimized_parameters, loss_per_dim_dict, test_loss = env.evaluate_simulator_code(StateDifferential=user_code_module.StateDifferential, config=config, logger=logger)
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/envs.py", line 163, in evaluate_simulator_code
+    return gt_env.evaluate_simulator_code_wrapper(StateDifferential=StateDifferential, train_data=self.train_data, val_data=self.val_data, test_data=self.test_data, config=config, logger=logger, env_name=self.env_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 123, in evaluate_simulator_code_wrapper
+    train_loss, val_loss, optimized_parameters, loss_per_dim, test_loss = self.evaluate_simulator_code_using_pytorch(StateDifferential, train_data, val_data, test_data, config=config, logger=logger, env_name=env_name)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 234, in evaluate_simulator_code_using_pytorch
+    cum_loss += train_opt(f_model, states_train_batch, actions_train_batch)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 176, in train
+    pred_state = states_train_batch_i[:,t] + dx_dt
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+MainProcess| 2025-10-11 13:12:36,912,912 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error=The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+MainProcess| 2025-10-11 13:12:36,913,913 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:12:36,913,913 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-11 13:12:36,917,917 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-11 13:12:36,933,933 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 12 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:12:36,934,934 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:12:36,934,934 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:12:36,934,934 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:12:51,201,201 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:12:51,201,201 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The model does not explicitly use the treatment_duration input, but it is assumed that the input state variables are influenced by the treatment_duration."
+}
+MainProcess| 2025-10-11 13:14:36,900,900 multiprocessing INFO Early stopping triggered at epoch 1010
+MainProcess| 2025-10-11 13:14:36,921,921 multiprocessing INFO [NSDT | Dataset-CBIO | 12][Generation 0] | Top Fitness: 0.23796844482421875 | Num Programs: 1 | Mean Fitness: 0.23796844482421875 | Fitnesses: [0.23796844482421875] | Current Gen Val Loss: 0.23796844482421875
+MainProcess| 2025-10-11 13:14:36,921,921 multiprocessing INFO [NSDT | Dataset-CBIO | 12][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 12, 'generation': 0, 'top_fitness': 0.23796844482421875, 'num_programs': 1, 'mean_fitness': np.float64(0.23796844482421875), 'fitnesses': [0.23796844482421875], 'current_gen_val_loss': 0.23796844482421875}
+MainProcess| 2025-10-11 13:14:36,921,921 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:14:36,922,922 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:14:36,922,922 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:14:36,922,922 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-11 13:14:36,924,924 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-11 13:14:36,931,931 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 13 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:14:36,932,932 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:14:36,933,933 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:14:36,933,933 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:14:50,292,292 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:14:50,293,293 multiprocessing INFO [Function Call] [complete_StateDifferential_code] {
+  "StateDifferential_code": "import torch\nimport torch.nn as nn\n\n# Define the StateDifferential model\n\nclass StateDifferential(nn.Module):\n\n    def __init__(self):\n        super(StateDifferential, self).__init__()\n        self.fc1 = nn.Linear(1, 64)\n        self.fc2 = nn.Linear(64, 64)\n        self.fc3 = nn.Linear(64, 1)\n\n    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):\n        # Tumor size differential\n        ts = torch.relu(self.fc1(tumor_size))\n        ts = torch.relu(self.fc2(ts))\n        ts_diff = self.fc3(ts)\n\n        # MSI score differential\n        ms = torch.relu(self.fc1(msi_score))\n        ms = torch.relu(self.fc2(ms))\n        ms_diff = self.fc3(ms)\n\n        # TMB nonsynonymous differential\n        tn = torch.relu(self.fc1(tmb_nonsynonymous))\n        tn = torch.relu(self.fc2(tn))\n        tn_diff = self.fc3(tn)\n\n        # Treatment duration differential\n        td = torch.relu(self.fc1(treatment_duration))\n        td = torch.relu(self.fc2(td))\n        td_diff = self.fc3(td)\n\n        return ts_diff, ms_diff, tn_diff, td_diff",
+  "code_description": "This is a white box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, tmb_nonsynonymous, and treatment_duration. The model has three fully connected layers with ReLU activation functions. The forward() method accepts four separate tensor arguments for each of the state variables and returns their differentials."
+}
+MainProcess| 2025-10-11 13:14:50,299,299 multiprocessing ERROR [Error] The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 380, in _run
+    function_return_message, code_dict, has_success = process_function_call_and_return_message(response_message["function_call"], self.simulator_code_dict, env=self.env, functions=self.functions, config=self.config, logger=self.logger)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 114, in process_function_call_and_return_message
+    function_response, simulator_code_dict, has_success = function_to_call(**function_args)
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 25, in complete_StateDifferential_code
+    train_loss, val_loss, optimized_parameters, loss_per_dim_dict, test_loss = env.evaluate_simulator_code(StateDifferential=user_code_module.StateDifferential, config=config, logger=logger)
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/envs.py", line 163, in evaluate_simulator_code
+    return gt_env.evaluate_simulator_code_wrapper(StateDifferential=StateDifferential, train_data=self.train_data, val_data=self.val_data, test_data=self.test_data, config=config, logger=logger, env_name=self.env_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 123, in evaluate_simulator_code_wrapper
+    train_loss, val_loss, optimized_parameters, loss_per_dim, test_loss = self.evaluate_simulator_code_using_pytorch(StateDifferential, train_data, val_data, test_data, config=config, logger=logger, env_name=env_name)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 234, in evaluate_simulator_code_using_pytorch
+    cum_loss += train_opt(f_model, states_train_batch, actions_train_batch)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 176, in train
+    pred_state = states_train_batch_i[:,t] + dx_dt
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+MainProcess| 2025-10-11 13:14:50,300,300 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error=The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+MainProcess| 2025-10-11 13:14:50,301,301 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:14:50,302,302 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-11 13:14:50,306,306 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-11 13:14:50,318,318 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 14 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:14:50,319,319 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:14:50,319,319 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:14:50,319,319 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:15:06,749,749 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:15:06,750,750 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The model does not explicitly use the treatment_duration input, but it is assumed that the input state variables are influenced by the duration of treatment."
+}
+MainProcess| 2025-10-11 13:16:55,371,371 multiprocessing INFO Early stopping triggered at epoch 1030
+MainProcess| 2025-10-11 13:16:55,391,391 multiprocessing INFO [NSDT | Dataset-CBIO | 14][Generation 0] | Top Fitness: 0.23807741701602936 | Num Programs: 1 | Mean Fitness: 0.23807741701602936 | Fitnesses: [0.23807741701602936] | Current Gen Val Loss: 0.23807741701602936
+MainProcess| 2025-10-11 13:16:55,391,391 multiprocessing INFO [NSDT | Dataset-CBIO | 14][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 14, 'generation': 0, 'top_fitness': 0.23807741701602936, 'num_programs': 1, 'mean_fitness': np.float64(0.23807741701602936), 'fitnesses': [0.23807741701602936], 'current_gen_val_loss': 0.23807741701602936}
+MainProcess| 2025-10-11 13:16:55,391,391 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:16:55,393,393 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:16:55,393,393 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:16:55,393,393 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-11 13:16:55,397,397 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-11 13:16:55,403,403 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 15 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:16:55,405,405 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:16:55,405,405 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:16:55,405,405 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:17:08,902,902 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:17:08,902,902 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each path consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The model does not explicitly model the effect of treatment_duration, but it is assumed that the effect of treatment_duration is captured in the training data and learned by the model."
+}
+MainProcess| 2025-10-11 13:18:59,424,424 multiprocessing INFO Early stopping triggered at epoch 1050
+MainProcess| 2025-10-11 13:18:59,445,445 multiprocessing INFO [NSDT | Dataset-CBIO | 15][Generation 0] | Top Fitness: 0.238187775015831 | Num Programs: 1 | Mean Fitness: 0.238187775015831 | Fitnesses: [0.238187775015831] | Current Gen Val Loss: 0.238187775015831
+MainProcess| 2025-10-11 13:18:59,445,445 multiprocessing INFO [NSDT | Dataset-CBIO | 15][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 15, 'generation': 0, 'top_fitness': 0.238187775015831, 'num_programs': 1, 'mean_fitness': np.float64(0.238187775015831), 'fitnesses': [0.238187775015831], 'current_gen_val_loss': 0.238187775015831}
+MainProcess| 2025-10-11 13:18:59,445,445 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:18:59,447,447 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:18:59,447,447 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:18:59,447,447 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-11 13:18:59,452,452 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-11 13:18:59,465,465 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 16 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:18:59,467,467 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:18:59,467,467 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:18:59,467,467 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:19:11,706,706 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:19:11,707,707 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The model does not explicitly model the effect of treatment_duration, but it is assumed that the changes in the state variables implicitly capture the effect of treatment over time."
+}
+MainProcess| 2025-10-11 13:20:59,016,16 multiprocessing INFO Early stopping triggered at epoch 1010
+MainProcess| 2025-10-11 13:20:59,037,37 multiprocessing INFO [NSDT | Dataset-CBIO | 16][Generation 0] | Top Fitness: 0.23708203434944153 | Num Programs: 1 | Mean Fitness: 0.23708203434944153 | Fitnesses: [0.23708203434944153] | Current Gen Val Loss: 0.23708203434944153
+MainProcess| 2025-10-11 13:20:59,038,38 multiprocessing INFO [NSDT | Dataset-CBIO | 16][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 16, 'generation': 0, 'top_fitness': 0.23708203434944153, 'num_programs': 1, 'mean_fitness': np.float64(0.23708203434944153), 'fitnesses': [0.23708203434944153], 'current_gen_val_loss': 0.23708203434944153}
+MainProcess| 2025-10-11 13:20:59,038,38 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:20:59,039,39 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:20:59,039,39 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:20:59,039,39 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-11 13:20:59,043,43 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-11 13:20:59,051,51 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 17 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:20:59,059,59 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:20:59,059,59 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:20:59,059,59 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:21:13,912,912 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:21:13,913,913 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each input variable, each path consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The forward() method accepts the four tensor arguments separately and returns the differentials separately as well."
+}
+MainProcess| 2025-10-11 13:23:01,876,876 multiprocessing INFO Early stopping triggered at epoch 1010
+MainProcess| 2025-10-11 13:23:01,897,897 multiprocessing INFO [NSDT | Dataset-CBIO | 17][Generation 0] | Top Fitness: 0.23722229897975922 | Num Programs: 1 | Mean Fitness: 0.23722229897975922 | Fitnesses: [0.23722229897975922] | Current Gen Val Loss: 0.23722229897975922
+MainProcess| 2025-10-11 13:23:01,897,897 multiprocessing INFO [NSDT | Dataset-CBIO | 17][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 17, 'generation': 0, 'top_fitness': 0.23722229897975922, 'num_programs': 1, 'mean_fitness': np.float64(0.23722229897975922), 'fitnesses': [0.23722229897975922], 'current_gen_val_loss': 0.23722229897975922}
+MainProcess| 2025-10-11 13:23:01,897,897 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:23:01,898,898 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:23:01,898,898 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:23:01,898,898 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-11 13:23:01,903,903 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-11 13:23:01,909,909 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 18 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:23:01,911,911 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:23:01,911,911 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:23:01,911,911 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:23:18,466,466 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:23:18,467,467 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+        
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+        
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+        
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+        
+        # Treatment duration differential
+        treatment_duration = torch.relu(self.fc1(treatment_duration))
+        treatment_duration = torch.relu(self.fc2(treatment_duration))
+        treatment_duration_diff = self.fc3(treatment_duration)
+        
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff, treatment_duration_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, tmb_nonsynonymous, and treatment_duration. Each variable is passed through the network separately and the output is the predicted change in each variable over time."
+}
+MainProcess| 2025-10-11 13:23:18,475,475 multiprocessing ERROR [Error] The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 380, in _run
+    function_return_message, code_dict, has_success = process_function_call_and_return_message(response_message["function_call"], self.simulator_code_dict, env=self.env, functions=self.functions, config=self.config, logger=self.logger)
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 114, in process_function_call_and_return_message
+    function_response, simulator_code_dict, has_success = function_to_call(**function_args)
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/utils/llm_tools.py", line 25, in complete_StateDifferential_code
+    train_loss, val_loss, optimized_parameters, loss_per_dim_dict, test_loss = env.evaluate_simulator_code(StateDifferential=user_code_module.StateDifferential, config=config, logger=logger)
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/envs.py", line 163, in evaluate_simulator_code
+    return gt_env.evaluate_simulator_code_wrapper(StateDifferential=StateDifferential, train_data=self.train_data, val_data=self.val_data, test_data=self.test_data, config=config, logger=logger, env_name=self.env_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 123, in evaluate_simulator_code_wrapper
+    train_loss, val_loss, optimized_parameters, loss_per_dim, test_loss = self.evaluate_simulator_code_using_pytorch(StateDifferential, train_data, val_data, test_data, config=config, logger=logger, env_name=env_name)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 234, in evaluate_simulator_code_using_pytorch
+    cum_loss += train_opt(f_model, states_train_batch, actions_train_batch)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/libs/datasets/env.py", line 176, in train
+    pred_state = states_train_batch_i[:,t] + dx_dt
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+RuntimeError: The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+MainProcess| 2025-10-11 13:23:18,478,478 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error=The size of tensor a (3) must match the size of tensor b (4) at non-singleton dimension 1
+MainProcess| 2025-10-11 13:23:18,480,480 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:23:18,480,480 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-11 13:23:18,487,487 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-11 13:23:18,500,500 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 19 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-11 13:23:18,501,501 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-11 13:23:18,502,502 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-11 13:23:18,502,502 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 9.80% | Tokens remaining 7389]
+MainProcess| 2025-10-11 13:23:29,841,841 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-11 13:23:29,842,842 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        tumor_size = torch.relu(self.fc1(tumor_size))
+        tumor_size = torch.relu(self.fc2(tumor_size))
+        tumor_size_diff = self.fc3(tumor_size)
+
+        # MSI score differential
+        msi_score = torch.relu(self.fc1(msi_score))
+        msi_score = torch.relu(self.fc2(msi_score))
+        msi_score_diff = self.fc3(msi_score)
+
+        # TMB nonsynonymous differential
+        tmb_nonsynonymous = torch.relu(self.fc1(tmb_nonsynonymous))
+        tmb_nonsynonymous = torch.relu(self.fc2(tmb_nonsynonymous))
+        tmb_nonsynonymous_diff = self.fc3(tmb_nonsynonymous)
+
+        return tumor_size_diff, msi_score_diff, tmb_nonsynonymous_diff
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of two hidden layers with ReLU activation and a final linear layer to output the differential. The model does not explicitly model the effect of treatment_duration, but it is assumed that the effect of treatment_duration is captured in the training data and learned by the model."
+}
+MainProcess| 2025-10-11 13:25:19,873,873 multiprocessing INFO Early stopping triggered at epoch 1030
+MainProcess| 2025-10-11 13:25:19,893,893 multiprocessing INFO [NSDT | Dataset-CBIO | 19][Generation 0] | Top Fitness: 0.23809601366519928 | Num Programs: 1 | Mean Fitness: 0.23809601366519928 | Fitnesses: [0.23809601366519928] | Current Gen Val Loss: 0.23809601366519928
+MainProcess| 2025-10-11 13:25:19,893,893 multiprocessing INFO [NSDT | Dataset-CBIO | 19][GEN RESULT] {'method': 'NSDT', 'env_name': 'Dataset-CBIO', 'seed': 19, 'generation': 0, 'top_fitness': 0.23809601366519928, 'num_programs': 1, 'mean_fitness': np.float64(0.23809601366519928), 'fitnesses': [0.23809601366519928], 'current_gen_val_loss': 0.23809601366519928}
+MainProcess| 2025-10-11 13:25:19,893,893 multiprocessing ERROR [Error] Unknown env name: Dataset-CBIO
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 417, in _run
+    reflection_prompt = self.generate_reflection_prompt_with_group(generation_dicts=generation_dicts, history_generation=history_generation, iteration=generation_id, history_best_generation=history_best_generation)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 324, in generate_reflection_prompt_with_group
+    completions.append(self.generate_reflection_competition_for_generation_dict(generation_dict))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 295, in generate_reflection_competition_for_generation_dict
+    raise ValueError(f'Unknown env name: {self.env.env_name}')
+ValueError: Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:25:19,894,894 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error=Unknown env name: Dataset-CBIO
+MainProcess| 2025-10-11 13:25:19,894,894 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-11 13:25:19,894,894 multiprocessing INFO Time taken for all runs: 899.2208092089859s	| 14.987013486816432 minutes
+MainProcess| 2025-10-11 13:25:19,894,894 multiprocessing INFO [Log found at] logs/run-20251011-131020_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-11 13:25:19,906,906 multiprocessing INFO process shutting down

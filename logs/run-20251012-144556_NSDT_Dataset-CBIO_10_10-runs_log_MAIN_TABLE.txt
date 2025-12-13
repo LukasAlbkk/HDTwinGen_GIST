@@ -1,0 +1,1023 @@
+MainProcess| 2025-10-12 14:45:56,700,700 multiprocessing INFO Starting run 	 | See log at : logs/run-20251012-144556_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-12 14:45:56,700,700 multiprocessing INFO [Main Config] {'run': {'samples': 1000, 'max_episodes': 1, 'log_path': 'logs/run-20251012-144556_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 16, 'reflection_history': 16, 'sub_group_resample': 4, 'generations': 20, 'nsdt_patience': 20, 'optimize_params': True, 'optimization': {'patience': 100, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1000, 'learning_rate': 0.01, 'weight_decay': 0.0, 'epochs': 2000, 'log_interval': 10}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/26012024'}, 'setup': {'trajectories_sweep': [10000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'RealEnvGen', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 10, 'seed_runs': 10, 'enable_tests': False, 'cuda': True, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-12 14:45:56,700,700 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)
+MainProcess| 2025-10-12 14:45:56,702,702 multiprocessing INFO Running Dataset-CBIO NSDT 10
+MainProcess| 2025-10-12 14:45:56,721,721 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 10 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:45:56,736,736 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:45:56,737,737 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:45:56,737,737 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:45:57,417,417 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:45:57,425,425 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 10, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:45:57,427,427 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 10, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:45:57,427,427 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)
+MainProcess| 2025-10-12 14:45:57,434,434 multiprocessing INFO Running Dataset-CBIO NSDT 11
+MainProcess| 2025-10-12 14:45:57,448,448 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 11 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:45:57,449,449 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:45:57,450,450 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:45:57,450,450 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:45:57,720,720 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 0 / 10
+MainProcess| 2025-10-12 14:45:57,720,720 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 1 / 10 | Now sleeping for 2.904759107019637 seconds
+MainProcess| 2025-10-12 14:46:00,840,840 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:00,842,842 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 11, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:00,843,843 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 11, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:00,844,844 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)
+MainProcess| 2025-10-12 14:46:00,849,849 multiprocessing INFO Running Dataset-CBIO NSDT 12
+MainProcess| 2025-10-12 14:46:00,861,861 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 12 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:00,862,862 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:00,862,862 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:00,862,862 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:01,099,99 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:01,101,101 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 12, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:01,103,103 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 12, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:01,104,104 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)
+MainProcess| 2025-10-12 14:46:01,112,112 multiprocessing INFO Running Dataset-CBIO NSDT 13
+MainProcess| 2025-10-12 14:46:01,120,120 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 13 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:01,121,121 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:01,121,121 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:01,121,121 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:01,326,326 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:01,328,328 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 13, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:01,329,329 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 13, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:01,329,329 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)
+MainProcess| 2025-10-12 14:46:01,335,335 multiprocessing INFO Running Dataset-CBIO NSDT 14
+MainProcess| 2025-10-12 14:46:01,347,347 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 14 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:01,348,348 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:01,348,348 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:01,349,349 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:01,681,681 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 0 / 10
+MainProcess| 2025-10-12 14:46:01,681,681 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 1 / 10 | Now sleeping for 2.2136570754033116 seconds
+MainProcess| 2025-10-12 14:46:04,107,107 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:04,109,109 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 14, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:04,110,110 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 14, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:04,110,110 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)
+MainProcess| 2025-10-12 14:46:04,117,117 multiprocessing INFO Running Dataset-CBIO NSDT 15
+MainProcess| 2025-10-12 14:46:04,131,131 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 15 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:04,132,132 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:04,132,132 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:04,133,133 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:04,478,478 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:04,480,480 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 15, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:04,482,482 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 15, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:04,482,482 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)
+MainProcess| 2025-10-12 14:46:04,488,488 multiprocessing INFO Running Dataset-CBIO NSDT 16
+MainProcess| 2025-10-12 14:46:04,502,502 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 16 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:04,504,504 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:04,504,504 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:04,504,504 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:04,680,680 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:04,682,682 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 16, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:04,684,684 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 16, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:04,684,684 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)
+MainProcess| 2025-10-12 14:46:04,691,691 multiprocessing INFO Running Dataset-CBIO NSDT 17
+MainProcess| 2025-10-12 14:46:04,705,705 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 17 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:04,706,706 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:04,706,706 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:04,706,706 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:05,197,197 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 0 / 10
+MainProcess| 2025-10-12 14:46:05,197,197 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 1 / 10 | Now sleeping for 3.0439678194249864 seconds
+MainProcess| 2025-10-12 14:46:08,427,427 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:08,429,429 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 17, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:08,430,430 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 17, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:08,431,431 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)
+MainProcess| 2025-10-12 14:46:08,436,436 multiprocessing INFO Running Dataset-CBIO NSDT 18
+MainProcess| 2025-10-12 14:46:08,446,446 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 18 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:08,447,447 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:08,447,447 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:08,447,447 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:08,904,904 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 0 / 10
+MainProcess| 2025-10-12 14:46:08,904,904 multiprocessing INFO [NSDT][OpenAI API Request Error] <class 'openai.error.RateLimitError'> ('You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.',) | num_retries: 1 / 10 | Now sleeping for 2.362529726666443 seconds
+MainProcess| 2025-10-12 14:46:11,486,486 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:11,488,488 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 18, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:11,490,490 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 18, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:11,490,490 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)
+MainProcess| 2025-10-12 14:46:11,496,496 multiprocessing INFO Running Dataset-CBIO NSDT 19
+MainProcess| 2025-10-12 14:46:11,511,511 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 19 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-12 14:46:11,513,513 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-12 14:46:11,513,513 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-12 14:46:11,513,513 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-12 14:46:11,701,701 multiprocessing ERROR [Error] Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 373, in _run
+    response_messages = self.get_llm_response_with_retries(self.messages, n=n) # Code message
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 269, in get_llm_response_with_retries
+    response_message = self.get_llm_response(messages, n=n, print_=print_)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 220, in get_llm_response
+    response = chat_completion_rl(**llm_config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 579, in chat_completion_rl
+    raise e
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 538, in chat_completion_rl
+    return chat_completion_rl_inner(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/llm_utils.py", line 683, in chat_completion_rl_inner
+    response = openai.ChatCompletion.create(**kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/chat_completion.py", line 25, in create
+    return super().create(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_resources/abstract/engine_api_resource.py", line 153, in create
+    response, _, api_key = requestor.request(
+                           ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 298, in request
+    resp, got_stream = self._interpret_response(result, stream)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 700, in _interpret_response
+    self._interpret_response_line(
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/.venv/lib/python3.11/site-packages/openai/api_requestor.py", line 763, in _interpret_response_line
+    raise self.handle_error_response(
+openai.error.AuthenticationError: Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:11,704,704 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 19, 1000)	| error=Incorrect API key provided: sk-proj-********************************************************************************************************************************************************nG8A. You can find your API key at https://platform.openai.com/account/api-keys.
+MainProcess| 2025-10-12 14:46:11,706,706 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 19, 'method_name': 'NSDT'}
+MainProcess| 2025-10-12 14:46:11,706,706 multiprocessing INFO Time taken for all runs: 15.006545957992785s	| 0.25010909929987973 minutes
+MainProcess| 2025-10-12 14:46:11,706,706 multiprocessing INFO [Log found at] logs/run-20251012-144556_NSDT_Dataset-CBIO_10_10-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-12 14:46:11,723,723 multiprocessing INFO process shutting down

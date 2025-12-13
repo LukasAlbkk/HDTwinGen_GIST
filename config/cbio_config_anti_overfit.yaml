@@ -1,0 +1,84 @@
+1run:
+  # ========================================
+  # CONFIGURAÇÃO ANTI-OVERFITTING
+  # Para datasets pequenos (625 observações)
+  # Tempo estimado: 2-3 horas
+  # ========================================
+
+  samples: 20                # Menos candidatos (reduz tempo)
+  max_episodes: 1
+  log_path: ''
+  device: ''
+  model: 'gpt-4o-mini'
+  temperature: 0.7
+  top_p: 0.95
+  frequency_penalty: 0
+  presence_penalty: 0
+  stop: ""
+
+  # ========================================
+  # ALGORITMO EVOLUTIVO NSDT
+  # ========================================
+  optimizer: 'pytorch'
+  keep_top_samples: 3        # Menos candidatos mantidos
+  reflection_history: 2
+  sub_group_resample: 2
+  generations: 8             # Menos gerações (foco em qualidade)
+  nsdt_patience: 15
+  optimize_params: true
+
+  # ========================================
+  # TREINAMENTO PYTORCH - ANTI-OVERFITTING
+  # ========================================
+  optimization:
+    patience: 25             # Early stopping mais agressivo (40→25)
+    log_optimization: true
+
+  pytorch_as_optimizer:
+    batch_size: 1
+    learning_rate: 1e-3      # LR menor: 3e-3 → 1e-3 (mais conservador)
+    weight_decay: 5e-3       # Weight decay MUITO maior: 1e-4 → 5e-3 (anti-overfit)
+    epochs: 400              # Menos épocas (600→400)
+    log_interval: 40
+
+  dynode_retrain_model: true
+  dynode_saved_models_folder: 'saved_models/cbio'
+
+# ========================================
+# SETUP DO EXPERIMENTO
+# ========================================
+setup:
+  trajectories_sweep: [1000]
+  use_azure_api: false
+  debug_mode: false
+  flush_mode: false
+  multi_process_results: false
+  multi_process_cores: 4
+  experiment: 'MAIN_TABLE'
+
+  methods_to_evaluate: ['NSDT']
+  envs_to_evaluate: ['Dataset-CBIO']
+
+  wandb:
+    project: HDTwinGen_CBIO_AntiOverfit
+    track: false
+
+  log_dir: logs
+  torch_deterministic: true
+  seed_start: 42
+  seed_runs: 5               # 5 seeds para estatísticas robustas
+
+  enable_tests: false
+  cuda: false
+
+  data_science_env_use_description: false
+  open_ai_rate_limit_requests_per_minute: 3000
+  api_retry_with_exponential_backoff__initial_delay: 1
+  api_retry_with_exponential_backoff__exponential_base: 2
+  api_retry_with_exponential_backoff__jitter: true
+  api_retry_with_exponential_backoff__max_retries: 10
+  api_request_timeout: 60000
+  api_stream: false
+
+  force_recache: false
+  load_from_cache: true

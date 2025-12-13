@@ -1,0 +1,15 @@
+{
+  "env_name": "Dataset-CBIO",
+  "seed": 42,
+  "test_loss": 0.15920668840408325,
+  "val_loss": 0.2652814984321594,
+  "train_loss": 0.1520533561706543,
+  "optimized_parameters": {},
+  "model_description": "Improved hybrid design with increased capacity, layer normalization, and adjusted dropout for GIST Cancer Digital Twin model.",
+  "code_path": "modelos_novos_3/best_model_Dataset-CBIO_seed42.py",
+  "loss_per_dim": {
+    "msi_score": 0.3241172432899475,
+    "tmb_nonsynonymous": 0.20644575357437134,
+    "tumor_size": 0.0
+  }
+}

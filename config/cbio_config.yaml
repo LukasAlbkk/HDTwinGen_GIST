@@ -1,0 +1,60 @@
+run:
+  samples: 100  # Reduced for faster testing
+  max_episodes: 1
+  log_path: ''
+  device: ''
+  model: 'gpt4o-mini-202409'
+  temperature: 0.7
+  top_p: 0.95
+  frequency_penalty: 0
+  presence_penalty: 0
+  stop: ""
+  dynode_learning_rate: 1e-2
+  rnn_learning_rate: 1e-2
+  optimizer: 'pytorch'
+  keep_top_samples: 8  # Reduced for faster testing
+  reflection_history: 3  # Reduced to avoid token limit errors
+  sub_group_resample: 2
+  generations: 3  # Reduced to avoid token limit in later generations
+  nsdt_patience: 20
+  optimize_params: true
+  optimization:
+    patience: 50
+    log_optimization: true
+  pytorch_as_optimizer:
+    batch_size: 1000
+    learning_rate: 1e-2
+    weight_decay: 0.0
+    epochs: 1000
+    log_interval: 100
+  dynode_retrain_model: true
+  dynode_saved_models_folder: 'saved_models/cbio'
+setup:
+  trajectories_sweep: [1000]
+  use_azure_api: false  # Set to true if you have Azure API access
+  debug_mode: false
+  flush_mode: false
+  multi_process_results: false
+  multi_process_cores: 4
+  experiment: 'CBIO_TEST'
+  methods_to_evaluate: ['NSDT']  # Just test NSDT method
+  envs_to_evaluate: ['Dataset-CBIO']  # Only your dataset
+  wandb:
+    project: HDTwinGen_CBIO
+    track: false  # Set to true if you want to track with wandb
+  log_dir: logs
+  torch_deterministic: true
+  seed_start: 10
+  seed_runs: 3  # Reduced for faster testing
+  enable_tests: false
+  cuda: false  # Set to CPU since no CUDA available
+  data_science_env_use_description: false
+  open_ai_rate_limit_requests_per_minute: 3000
+  api_retry_with_exponential_backoff__initial_delay: 1
+  api_retry_with_exponential_backoff__exponential_base: 2
+  api_retry_with_exponential_backoff__jitter: true
+  api_retry_with_exponential_backoff__max_retries: 10
+  api_request_timeout: 60000
+  api_stream: false
+  force_recache: false
+  load_from_cache: true

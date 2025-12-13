@@ -1,0 +1,3 @@
+- run.generations=3
+- setup.seed_runs=1
+- run.pytorch_as_optimizer.epochs=200

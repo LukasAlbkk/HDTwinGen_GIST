@@ -1,0 +1,93 @@
+run:
+  # ========================================
+  # CONFIGURAÇÃO DE ALTA QUALIDADE - MELHOR RESULTADO POSSÍVEL
+  # Tempo estimado: 3-4 horas
+  # ========================================
+
+  samples: 25                # Mais candidatos iniciais (20 → 25)
+  max_episodes: 1
+  log_path: ''
+  device: ''
+  model: 'gpt-4o-mini'      # GPT-4o mini - rápido e econômico
+  temperature: 0.7           # Criatividade moderada
+  top_p: 0.95
+  frequency_penalty: 0
+  presence_penalty: 0
+  stop: ""
+
+  # Baselines (DyNODE, RNN, Transformer)
+  dynode_learning_rate: 1e-2
+  rnn_learning_rate: 1e-2
+
+  # ========================================
+  # ALGORITMO EVOLUTIVO NSDT - MÁXIMA QUALIDADE
+  # ========================================
+  optimizer: 'pytorch'
+  keep_top_samples: 5        # Mantém os 5 melhores
+  reflection_history: 3      # Histórico para reflexão
+  sub_group_resample: 2
+  generations: 10            # 10 iterações evolutivas (alta qualidade)
+  nsdt_patience: 20          # Mais paciência (15 → 20)
+  optimize_params: true      # ESSENCIAL: otimiza parâmetros
+
+  # ========================================
+  # TREINAMENTO PYTORCH - MÁXIMA QUALIDADE
+  # ========================================
+  optimization:
+    patience: 40             # Early stopping: 40 épocas sem melhora (30 → 40)
+    log_optimization: true   # Mostra progresso do treinamento
+
+  pytorch_as_optimizer:
+    batch_size: 1            # Batch=1 para dataset pequeno (870 obs)
+    learning_rate: 3e-3      # Learning rate menor para estabilidade (5e-3 → 3e-3)
+    weight_decay: 1e-4       # Regularização contra overfitting
+    epochs: 600              # Máximo 600 épocas para convergência completa (400 → 600)
+    log_interval: 50         # Log a cada 50 épocas
+
+  # Modelos baseline salvos
+  dynode_retrain_model: true
+  dynode_saved_models_folder: 'saved_models/cbio'
+
+# ========================================
+# SETUP DO EXPERIMENTO
+# ========================================
+setup:
+  trajectories_sweep: [1000]
+  use_azure_api: false
+  debug_mode: false
+  flush_mode: false
+  multi_process_results: false
+  multi_process_cores: 4
+  experiment: 'MAIN_TABLE'  # Experimento principal com validação de tratamento
+
+  # Métodos a avaliar
+  methods_to_evaluate: ['NSDT']  # Foco no NSDT
+  envs_to_evaluate: ['Dataset-CBIO']
+
+  # Tracking (opcional)
+  wandb:
+    project: HDTwinGen_CBIO_HighQuality
+    track: false             # Mude para true para usar Weights & Biases
+
+  log_dir: logs
+  torch_deterministic: true
+  seed_start: 42
+  seed_runs: 5               # 5 seeds para estatísticas robustas e CI confiável
+
+  # Hardware
+  enable_tests: false
+  cuda: false                # true se tiver GPU NVIDIA
+
+  # Configurações de API
+  data_science_env_use_description: false
+  open_ai_rate_limit_requests_per_minute: 3000
+  api_retry_with_exponential_backoff__initial_delay: 1
+  api_retry_with_exponential_backoff__exponential_base: 2
+  api_retry_with_exponential_backoff__jitter: true
+  api_retry_with_exponential_backoff__max_retries: 10
+  api_request_timeout: 60000
+  api_stream: false
+
+  # Cache
+  force_recache: false
+  load_from_cache: true

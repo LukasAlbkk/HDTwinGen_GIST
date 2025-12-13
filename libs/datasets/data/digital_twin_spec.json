@@ -1,0 +1,51 @@
+{
+  "STATE_VARIABLES": [
+    "msi_score",
+    "tmb_nonsynonymous"
+  ],
+  "STATE_OPTIONAL": [
+    "mitotic_rate"
+  ],
+  "STATIC_FEATURES": [
+    "tumor_size",
+    "age_at_diagnosis",
+    "gender_encoded",
+    "stage_encoded",
+    "tumor_purity",
+    "has_KIT",
+    "has_TP53",
+    "has_PDGFRA",
+    "num_mutations"
+  ],
+  "CONTROL_VARIABLES": [
+    "total_treatment_days",
+    "num_treatments"
+  ],
+  "TIME_VARIABLE": "recurrence_free_months",
+  "OUTPUT_DERIVATIVES": [
+    "d_msi_dt",
+    "d_tmb_dt"
+  ],
+  "SCM_RELATIONSHIPS": {
+    "msi_score": [
+      "msi_type",
+      "primary_site_group",
+      "recurrence_status"
+    ],
+    "tmb_nonsynonymous": [
+      "tumor_purity"
+    ],
+    "mitotic_rate": [
+      "msi_score"
+    ],
+    "tumor_size": [
+      "mutated_genes",
+      "pre_therapy_group"
+    ],
+    "treatment_duration_days": [
+      "treatment",
+      "treatment_response",
+      "race"
+    ]
+  }
+}

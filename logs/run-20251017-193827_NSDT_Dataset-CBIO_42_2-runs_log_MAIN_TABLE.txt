@@ -1,0 +1,227 @@
+MainProcess| 2025-10-17 19:38:27,116,116 multiprocessing INFO Starting run 	 | See log at : logs/run-20251017-193827_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-17 19:38:27,116,116 multiprocessing INFO [Main Config] {'run': {'samples': 20, 'max_episodes': 1, 'log_path': 'logs/run-20251017-193827_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt', 'device': 'cpu', 'model': 'gpt-4-0613', 'temperature': 0.7, 'top_p': 0.95, 'frequency_penalty': 0, 'presence_penalty': 0, 'stop': '', 'dynode_learning_rate': 0.01, 'rnn_learning_rate': 0.01, 'optimizer': 'pytorch', 'keep_top_samples': 5, 'reflection_history': 3, 'sub_group_resample': 2, 'generations': 5, 'nsdt_patience': 15, 'optimize_params': True, 'optimization': {'patience': 30, 'log_optimization': True}, 'pytorch_as_optimizer': {'batch_size': 1, 'learning_rate': 0.005, 'weight_decay': 0.0001, 'epochs': 400, 'log_interval': 40}, 'dynode_retrain_model': True, 'dynode_saved_models_folder': 'saved_models/cbio'}, 'setup': {'trajectories_sweep': [1000], 'use_azure_api': False, 'debug_mode': False, 'flush_mode': False, 'multi_process_results': False, 'multi_process_cores': 4, 'experiment': 'MAIN_TABLE', 'methods_to_evaluate': ['NSDT'], 'envs_to_evaluate': ['Dataset-CBIO'], 'wandb': {'project': 'HDTwinGen_CBIO', 'track': False}, 'log_dir': 'logs', 'torch_deterministic': True, 'seed_start': 42, 'seed_runs': 2, 'enable_tests': False, 'cuda': False, 'data_science_env_use_description': False, 'open_ai_rate_limit_requests_per_minute': 3000, 'api_retry_with_exponential_backoff__initial_delay': 1, 'api_retry_with_exponential_backoff__exponential_base': 2, 'api_retry_with_exponential_backoff__jitter': True, 'api_retry_with_exponential_backoff__max_retries': 10, 'api_request_timeout': 60000, 'api_stream': False, 'force_recache': False, 'load_from_cache': True}}
+MainProcess| 2025-10-17 19:38:27,116,116 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 20)
+MainProcess| 2025-10-17 19:38:27,118,118 multiprocessing INFO Running Dataset-CBIO NSDT 42
+MainProcess| 2025-10-17 19:38:27,135,135 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 42 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-17 19:38:27,148,148 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-17 19:38:27,148,148 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-17 19:38:27,148,148 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-17 19:38:50,312,312 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-17 19:38:50,313,313 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        d_tumor_size__dt = self.fc1(tumor_size)
+        d_tumor_size__dt = torch.relu(d_tumor_size__dt)
+        d_tumor_size__dt = self.fc2(d_tumor_size__dt)
+        d_tumor_size__dt = torch.relu(d_tumor_size__dt)
+        d_tumor_size__dt = self.fc3(d_tumor_size__dt)
+
+        # MSI score differential
+        d_msi_score__dt = self.fc1(msi_score)
+        d_msi_score__dt = torch.relu(d_msi_score__dt)
+        d_msi_score__dt = self.fc2(d_msi_score__dt)
+        d_msi_score__dt = torch.relu(d_msi_score__dt)
+        d_msi_score__dt = self.fc3(d_msi_score__dt)
+
+        # TMB nonsynonymous differential
+        d_tmb_nonsynonymous__dt = self.fc1(tmb_nonsynonymous)
+        d_tmb_nonsynonymous__dt = torch.relu(d_tmb_nonsynonymous__dt)
+        d_tmb_nonsynonymous__dt = self.fc2(d_tmb_nonsynonymous__dt)
+        d_tmb_nonsynonymous__dt = torch.relu(d_tmb_nonsynonymous__dt)
+        d_tmb_nonsynonymous__dt = self.fc3(d_tmb_nonsynonymous__dt)
+
+        return d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt
+",
+"code_description": "This is a white box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of three fully connected layers with ReLU activation functions. The forward() method accepts four separate tensor arguments (tumor_size, msi_score, tmb_nonsynonymous, treatment_duration) and returns three values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt)."
+}
+MainProcess| 2025-10-17 19:38:50,313,313 multiprocessing ERROR [Error] cannot access local variable 'json' where it is not associated with a value
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 379, in _run
+    code_json = json.dumps(response_message["function_call"])
+                ^^^^
+UnboundLocalError: cannot access local variable 'json' where it is not associated with a value
+MainProcess| 2025-10-17 19:38:50,317,317 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 42, 20)	| error=cannot access local variable 'json' where it is not associated with a value
+MainProcess| 2025-10-17 19:38:50,319,319 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 42, 'method_name': 'NSDT'}
+MainProcess| 2025-10-17 19:38:50,320,320 multiprocessing INFO [Now evaluating exp] ('Dataset-CBIO', 'NSDT', 43, 20)
+MainProcess| 2025-10-17 19:38:50,329,329 multiprocessing INFO Running Dataset-CBIO NSDT 43
+MainProcess| 2025-10-17 19:38:50,355,355 multiprocessing INFO [Running generation 0] NSDT | Dataset-CBIO | 43 | Sampling n=1 keep_top_samples
+MainProcess| 2025-10-17 19:38:50,360,360 multiprocessing INFO [System] 
+Objective: Write code to create an effective differential equation simulator for a given task.
+Please note that the code should be fully functional. No placeholders.
+
+You must act autonomously and you will receive no human input at any stage. You have to return as output the complete code for completing this task, and correctly improve the code to create the most accurate and realistic simulator possible.
+You always write out the code contents. You always indent code with tabs.
+You cannot visualize any graphical output. You exist within a machine. The code can include black box multi-layer perceptions where required.
+
+Use the functions provided. When calling functions only provide a RFC8259 compliant JSON request following this format without deviation.
+
+MainProcess| 2025-10-17 19:38:50,361,361 multiprocessing INFO [User] 
+You will get a system description to code a differential equation simulator for.
+
+System Description:```
+Treatment Response Model for GIST under Multiple Targeted Therapies (CBIO Dataset)
+
+Here you must model the state differential of tumor_size, msi_score, and tmb_nonsynonymous; with the control input of treatment_duration. This model captures longitudinal tumor dynamics and genomic features across multiple treatment types including IMATINIB, SUNITINIB, REGORAFENIB, and other targeted therapies.
+
+IMPORTANT: The forward() method MUST accept exactly 4 separate tensor arguments in this order: tumor_size, msi_score, tmb_nonsynonymous, treatment_duration. Do NOT concatenate them into a single input tensor.
+
+CRITICAL: The forward() method MUST return EXACTLY 3 values (d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt). Do NOT return a derivative for treatment_duration as it is a control input, not a state variable.
+
+Description of the variables:
+* tumor_size: Tumor size in cm (longest diameter). Observable state variable that changes over time during treatment. (PASSED AS SEPARATE ARGUMENT)
+* msi_score: Microsatellite instability score. A genomic biomarker that may evolve during treatment. (PASSED AS SEPARATE ARGUMENT)
+* tmb_nonsynonymous: Tumor mutational burden (count of nonsynonymous mutations). Another genomic feature tracked over time. (PASSED AS SEPARATE ARGUMENT)
+* treatment_duration: Duration of treatment in days. This is the control input variable representing how long the patient has been on treatment. (PASSED AS SEPARATE ARGUMENT)
+
+Time units:
+* days (treatment_duration represents cumulative days of treatment)
+
+Value ranges:
+* tumor_size: [1.0, 30.0] cm (longest diameter)
+* msi_score: [0.0, 10.0] (normalized score)
+* tmb_nonsynonymous: [0.0, 3.0] (normalized mutation count)
+* treatment_duration: [0, 2000] days
+
+Training dataset:
+* Longitudinal observations from GIST patients with diverse treatment regimens (IMATINIB, SUNITINIB, REGORAFENIB, EVEROLIMUS, and others)
+* Treatment durations ranging from days to years
+* Includes treatment response categories: CR (Complete Response), PR (Partial Response), SD (Stable Disease), PD (Progressive Disease), NR (No Response)
+* Dataset includes genetic mutation profiles (KIT, TP53, RB1, SDHB, MTOR, NF1, TSC2)
+* The model should predict how tumor_size, msi_score, and tmb_nonsynonymous change over treatment_duration
+
+MainProcess| 2025-10-17 19:38:50,361,361 multiprocessing INFO [Progress: Step 1/0 | Retries: 0/30 | Token Capacity Used: 10.53% | Tokens remaining 7329]
+MainProcess| 2025-10-17 19:39:04,632,632 multiprocessing INFO [LLM RESPONSE MESSAGE]
+MainProcess| 2025-10-17 19:39:04,633,633 multiprocessing INFO [Function Call] [complete_StateDifferential_code] 
+{
+"StateDifferential_code": "
+import torch
+import torch.nn as nn
+
+class StateDifferential(nn.Module):
+    def __init__(self):
+        super(StateDifferential, self).__init__()
+        self.fc1 = nn.Linear(1, 64)
+        self.fc2 = nn.Linear(64, 64)
+        self.fc3 = nn.Linear(64, 1)
+
+    def forward(self, tumor_size, msi_score, tmb_nonsynonymous, treatment_duration):
+        # Tumor size differential
+        d_tumor_size__dt = self.fc1(tumor_size)
+        d_tumor_size__dt = torch.relu(self.fc2(d_tumor_size__dt))
+        d_tumor_size__dt = self.fc3(d_tumor_size__dt)
+
+        # MSI score differential
+        d_msi_score__dt = self.fc1(msi_score)
+        d_msi_score__dt = torch.relu(self.fc2(d_msi_score__dt))
+        d_msi_score__dt = self.fc3(d_msi_score__dt)
+
+        # TMB nonsynonymous differential
+        d_tmb_nonsynonymous__dt = self.fc1(tmb_nonsynonymous)
+        d_tmb_nonsynonymous__dt = torch.relu(self.fc2(d_tmb_nonsynonymous__dt))
+        d_tmb_nonsynonymous__dt = self.fc3(d_tmb_nonsynonymous__dt)
+
+        return d_tumor_size__dt, d_msi_score__dt, d_tmb_nonsynonymous__dt
+",
+"code_description": "This is a black box model that uses a simple feed-forward neural network to model the state differential of tumor_size, msi_score, and tmb_nonsynonymous with respect to treatment_duration. The model has three separate paths for each of the state variables, each consisting of a linear layer followed by a ReLU activation and another linear layer. The forward() method accepts the state variables and treatment_duration as separate arguments and returns the derivatives of the state variables."
+}
+MainProcess| 2025-10-17 19:39:04,633,633 multiprocessing ERROR [Error] cannot access local variable 'json' where it is not associated with a value
+Traceback (most recent call last):
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 170, in run_exp_wrapper_outer
+    result = run_exp_wrapper(args, logger, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 153, in run_exp_wrapper
+    result = run_exp(env_name=env_name,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/run.py", line 189, in run_exp
+    result = simulate(env_name,
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 47, in simulate
+    result = loop()
+             ^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/simulate.py", line 29, in loop
+    test_mse = agent.run()
+               ^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 255, in run
+    return self._run(state)
+           ^^^^^^^^^^^^^^^^
+  File "/Users/lucasalbuquerque/Downloads/HDTwinGen/agents.py", line 379, in _run
+    code_json = json.dumps(response_message["function_call"])
+                ^^^^
+UnboundLocalError: cannot access local variable 'json' where it is not associated with a value
+MainProcess| 2025-10-17 19:39:04,634,634 multiprocessing INFO [Failed evaluating exp] ('Dataset-CBIO', 'NSDT', 43, 20)	| error=cannot access local variable 'json' where it is not associated with a value
+MainProcess| 2025-10-17 19:39:04,635,635 multiprocessing INFO [Exp evaluation complete] {'errored': True, 'env_name': 'Dataset-CBIO', 'seed': 43, 'method_name': 'NSDT'}
+MainProcess| 2025-10-17 19:39:04,635,635 multiprocessing INFO Time taken for all runs: 37.51935462496476s	| 0.6253225770827461 minutes
+MainProcess| 2025-10-17 19:39:04,635,635 multiprocessing INFO [Log found at] logs/run-20251017-193827_NSDT_Dataset-CBIO_42_2-runs_log_MAIN_TABLE.txt
+MainProcess| 2025-10-17 19:39:04,669,669 multiprocessing INFO process shutting down

@@ -1,0 +1,16 @@
+{
+  "env_name": "Dataset-CBIO",
+  "seed": 43,
+  "test_loss": 26.990577697753906,
+  "val_loss": 31.30970001220703,
+  "train_loss": 41.350772857666016,
+  "optimized_parameters": {},
+  "model_description": "This code implements a neural ODE-like differential model for simulating treatment responses in GIST, using a hybrid design of mechanistic prior and residual MLP correction.",
+  "code_path": "saved_models/cbio/best_model_Dataset-CBIO_seed43.py",
+  "loss_per_dim": {
+    "tumor_size": 10.514324188232422,
+    "msi_score": 0.5129714608192444,
+    "tmb_nonsynonymous": 0.0025671618059277534,
+    "mitotic_rate": 114.20893096923828
+  }
+}
